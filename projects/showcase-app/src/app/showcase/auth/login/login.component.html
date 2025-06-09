@@ -1,0 +1,18 @@
+<div nz-row class="login-bg">
+  <div nz-col nzSpan="24" class="login-content">
+    <div nz-row class="login-main-block">
+      <div nz-col style="z-index: 1">
+        <img class="login-logo" src="./assets/img/logo-showcase.svg" alt="logo">
+        <dw-login-block [showRemember]="true" [showLanguage]="true" [showLoginTabSet]="true" [(loginTypeTabIndex)]= "tabSelectedIndex"></dw-login-block>
+      </div>
+    </div>
+    <div nz-row class="login-copyright-block">
+      <img class="login-logo-company" src="{{logoCompany}}" alt="logo">
+    </div>
+    <div nz-row class="login-copyright-block">
+      <div nz-col nzSpan="24" class="login-copyright">
+        <span>Copyright © DIGIWIN CO.,LTD., Ltd. All rights reserved.<span class="version">v{{dwVersion}}</span></span>
+      </div>
+    </div>
+  </div>
+</div>

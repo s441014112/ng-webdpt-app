@@ -1,0 +1,385 @@
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "newProjectRoot": "projects",
+  "projects": {
+    "ng-webdpt": {
+      "root": "",
+      "sourceRoot": "src",
+      "projectType": "application",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "allowedCommonJsDependencies": [
+              "crypto-js",
+              "ag-grid-angular",
+              "ag-grid-community",
+              "@ant-design/colors",
+              "date-fns/format",
+              "date-fns/parse",
+              "qs",
+              "@webdpt/framework/themes"
+            ],
+            "outputPath": "dist",
+            "index": "src/index.html",
+            "main": "src/main.ts",
+            "tsConfig": "src/tsconfig.app.json",
+            "polyfills": "src/polyfills.ts",
+            "assets": [
+              "src/assets",
+              "src/favicon.ico",
+              {
+                "glob": "**/*",
+                "input": "./node_modules/@webdpt/framework/assets/dw-framework",
+                "output": "assets/dw-framework"
+              },
+              {
+                "glob": "**/*",
+                "input": "src/assets",
+                "output": "assets"
+              },
+              {
+                "glob": "**/*",
+                "input": "./node_modules/@ant-design/icons-angular/src/inline-svg/",
+                "output": "assets"
+              },
+              "src/manifest.webmanifest"
+            ],
+            "styles": [
+              "src/styles.less"
+            ],
+            "scripts": [
+              "node_modules/jsencrypt/bin/jsencrypt.min.js"
+            ],
+            "vendorChunk": true,
+            "extractLicenses": false,
+            "buildOptimizer": false,
+            "sourceMap": true,
+            "optimization": false,
+            "namedChunks": true
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod.ts"
+                }
+              ],
+              "serviceWorker": true
+            },
+            "service-worker-dev": {
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ],
+              "outputHashing": "all",
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "serviceWorker": true
+            },
+            "development": {
+              "buildOptimizer": false,
+              "optimization": false,
+              "vendorChunk": true,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "namedChunks": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "browserTarget": "ng-webdpt:build:development"
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "ng-webdpt:build:production"
+            }
+          }
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "ng-webdpt:build"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "src/test.ts",
+            "karmaConfig": "./karma.conf.js",
+            "polyfills": "src/polyfills.ts",
+            "tsConfig": "src/tsconfig.spec.json",
+            "scripts": [
+              "node_modules/jsencrypt/bin/jsencrypt.min.js"
+            ],
+            "styles": [
+              "src/styles.less"
+            ],
+            "assets": [
+              "src/assets",
+              "src/favicon.ico",
+              {
+                "glob": "**/*",
+                "input": "./node_modules/@webdpt/framework/assets/dw-framework",
+                "output": "assets/dw-framework"
+              },
+              {
+                "glob": "**/*",
+                "input": "src/assets",
+                "output": "assets"
+              },
+              {
+                "glob": "**/*",
+                "input": "./node_modules/@ant-design/icons-angular/src/inline-svg/",
+                "output": "assets"
+              },
+              "src/manifest.webmanifest"
+            ]
+          }
+        },
+        "e2e": {
+          "builder": "@angular-devkit/build-angular:protractor",
+          "options": {
+            "protractorConfig": "e2e/protractor.conf.js",
+            "devServerTarget": "ng-webdpt:serve"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "ng-webdpt:serve:production"
+            }
+          }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "src/**/*.ts",
+              "src/**/*.html"
+            ]
+          }
+        }
+      }
+    },
+    "showcase-app": {
+      "root": "projects/showcase-app",
+      "sourceRoot": "projects/showcase-app/src",
+      "projectType": "application",
+      "prefix": "dw",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "outputPath": "dist",
+            "index": "projects/showcase-app/src/index.html",
+            "main": "projects/showcase-app/src/main.ts",
+            "polyfills": "projects/showcase-app/src/polyfills.ts",
+            "tsConfig": "projects/showcase-app/tsconfig.app.json",
+            "assets": [
+              "projects/showcase-app/src/favicon.ico",
+              "projects/showcase-app/src/assets",
+              {
+                "glob": "**/*",
+                "input": "./node_modules/@webdpt/framework/assets/dw-framework",
+                "output": "assets/dw-framework"
+              },
+              {
+                "glob": "**/*",
+                "input": "projects/showcase-app/src/assets",
+                "output": "assets"
+              },
+              {
+                "glob": "**/*",
+                "input": "./node_modules/@ant-design/icons-angular/src/inline-svg/",
+                "output": "assets"
+              },
+              "projects/showcase-app/src/manifest.webmanifest"
+            ],
+            "styles": [
+              "node_modules/highlight.js/styles/github-dark.min.css",
+              "node_modules/ag-grid-community/dist/styles/ag-grid.css",
+              "node_modules/ag-grid-community/dist/styles/ag-theme-material.css",
+              "node_modules/ag-grid-community/dist/styles/ag-theme-balham.css",
+              "node_modules/ag-grid-community/dist/styles/ag-theme-balham-dark.css",
+              "node_modules/@webdpt/iv-viewer/iv-viewer.css",
+              "projects/showcase-app/src/styles.less"
+            ],
+            "scripts": [
+              "node_modules/jsencrypt/bin/jsencrypt.min.js"
+            ],
+            "allowedCommonJsDependencies": [
+              "crypto-js",
+              "ag-grid-angular",
+              "ag-grid-community",
+              "@ant-design/colors",
+              "date-fns/format",
+              "date-fns/parse",
+              "qs",
+              "@webdpt/framework/themes"
+            ],
+            "vendorChunk": true,
+            "extractLicenses": false,
+            "buildOptimizer": false,
+            "sourceMap": true,
+            "optimization": false,
+            "namedChunks": true
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ],
+              "fileReplacements": [
+                {
+                  "replace": "projects/showcase-app/src/environments/environment.ts",
+                  "with": "projects/showcase-app/src/environments/environment.prod.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "serviceWorker": true
+            },
+            "service-worker-dev": {
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ],
+              "outputHashing": "all",
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "serviceWorker": true
+            },
+            "development": {
+              "buildOptimizer": false,
+              "optimization": false,
+              "vendorChunk": true,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "namedChunks": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "browserTarget": "showcase-app:build:development"
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "showcase-app:build:production"
+            }
+          }
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "showcase-app:build"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/showcase-app/src/test.ts",
+            "codeCoverage": true,
+            "codeCoverageExclude": [
+              "node_modules/**/*",
+              "ng-zorro-antd/**/*"
+            ],
+            "polyfills": "projects/showcase-app/src/polyfills.ts",
+            "tsConfig": "projects/showcase-app/tsconfig.spec.json",
+            "karmaConfig": "projects/showcase-app/karma.conf.js",
+            "styles": [
+              "node_modules/highlight.js/styles/github-dark.min.css",
+              "node_modules/ag-grid-community/dist/styles/ag-grid.css",
+              "node_modules/ag-grid-community/dist/styles/ag-theme-material.css",
+              "node_modules/ag-grid-community/dist/styles/ag-theme-balham.css",
+              "node_modules/ag-grid-community/dist/styles/ag-theme-balham-dark.css",
+              "node_modules/@webdpt/iv-viewer/iv-viewer.css",
+              "projects/showcase-app/src/styles.less"
+            ],
+            "scripts": [
+              "node_modules/jsencrypt/bin/jsencrypt.min.js"
+            ],
+            "assets": [
+              "projects/showcase-app/src/favicon.ico",
+              "projects/showcase-app/src/assets",
+              {
+                "glob": "**/*",
+                "input": "./node_modules/@webdpt/framework/assets/dw-framework",
+                "output": "assets/dw-framework"
+              },
+              {
+                "glob": "**/*",
+                "input": "projects/showcase-app/src/assets",
+                "output": "assets"
+              },
+              {
+                "glob": "**/*",
+                "input": "./node_modules/@ant-design/icons-angular/src/inline-svg/",
+                "output": "assets"
+              },
+              "projects/showcase-app/src/manifest.webmanifest"
+            ]
+          }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "projects/showcase-app/**/*.ts",
+              "projects/showcase-app/**/*.html"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "defaultProject": "ng-webdpt",
+  "schematics": {
+    "@schematics/angular:component": {
+      "prefix": "app",
+      "style": "less"
+    },
+    "@schematics/angular:directive": {
+      "prefix": "app"
+    }
+  },
+  "cli": {
+    "warnings": {},
+    "analytics": false,
+    "defaultCollection": "@angular-eslint/schematics"
+  }
+}

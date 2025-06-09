@@ -1,0 +1,41 @@
+<div class="template-list">
+  <nz-layout>
+    <nz-content>
+      <nz-card style="width:100%;" nzTitle="模板管理" [nzExtra]="extraTemplate">
+        <ul nz-list [nzDataSource]="templateDataSource" nzBordered nzSize="large">
+          <li nz-list-item *ngFor="let item of templateDataSource" nzNoFlex>
+            <ul nz-list-item-actions>
+              <nz-list-item-action>
+                <a (click)="editTemplate(item.id, item.name)">edit</a>
+              </nz-list-item-action>
+            </ul>
+            {{ item.name }}
+          </li>
+        </ul>
+      </nz-card>
+      <ng-template #extraTemplate>
+        <button nz-button nzType="primary" (click)="addTemplate()">新增模板</button>
+      </ng-template>
+    </nz-content>
+  </nz-layout>
+
+  <nz-modal [(nzVisible)]="isModalVisible" nzTitle="新增模板" (nzOnOk)="handleSubmit()" (nzOnCancel)="handleCancel()">
+    <ng-container *nzModalContent>
+      <form nz-form>
+        <div nz-form-item>
+          <label nz-form-label>模板名称</label>
+          <div nz-form-control>
+            <input nz-input [(ngModel)]="formData.name" name="name" required />
+          </div>
+        </div>
+    
+        <div nz-form-item>
+          <label nz-form-label>模板描述</label>
+          <div nz-form-control>
+            <textarea nz-input [(ngModel)]="formData.description" name="description"></textarea>
+          </div>
+        </div>
+      </form>
+    </ng-container>
+  </nz-modal>
+</div>
