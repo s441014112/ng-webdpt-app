@@ -15,9 +15,6 @@ export class ListComponentComponent implements OnInit {
   @Input() node!: ComponentNodeModel;
   @Input() selectedComponentId: string | null = null;
   @Output() selectComponent = new EventEmitter<ComponentNodeModel>();
-  @Output() addComponent = new EventEmitter<{ parent: ComponentNodeModel, componentType: COMPONENT_TYPE, index?: number }>();
-  @Output() deleteComponent = new EventEmitter<{ parent: ComponentNodeModel | null, componentToDelete: ComponentNodeModel }>();
-  @Output() updateComponentProps = new EventEmitter<{ componentId: string, newProps: Partial<any> }>();
 
 
   constructor() {}
@@ -36,21 +33,6 @@ export class ListComponentComponent implements OnInit {
   // 当内部的 SingleColumnComponent 被选中时，向上冒泡选中事件
   onChildSelect(childNode: ComponentNodeModel): void {
     this.selectComponent.emit(childNode);
-  }
-
-  // 当内部 SingleColumnComponent 内部的 Slot 请求添加新组件时，向上冒泡
-  onChildAddComponent(event: { parent: ComponentNodeModel, componentType: COMPONENT_TYPE, index?: number }): void {
-    this.addComponent.emit(event);
-  }
-
-  // 当内部 SingleColumnComponent 内部的 Slot 请求删除组件时，向上冒泡
-  onChildDeleteComponent(event: { parent: ComponentNodeModel | null, componentToDelete: ComponentNodeModel }): void {
-    this.deleteComponent.emit(event);
-  }
-
-  // 当内部 SingleColumnComponent 或其子组件属性更新时，向上冒泡
-  onChildUpdateComponentProps(event: { componentId: string, newProps: Partial<any> }): void {
-    this.updateComponentProps.emit(event);
   }
 
   isSelected(component: ComponentNodeModel): boolean {

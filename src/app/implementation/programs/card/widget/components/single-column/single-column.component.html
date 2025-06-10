@@ -16,7 +16,7 @@
     <div class="multi-column-slots">
       <ng-container *ngFor="let slot of slotChildren">
         <app-component-renderer
-          [componentNode]="slot"
+          [node]="slot"
           [selectedComponentId]="selectedComponentId"
           (selectComponent)="selectComponent.emit($event)">
         </app-component-renderer>

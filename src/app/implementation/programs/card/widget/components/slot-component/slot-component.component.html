@@ -1,0 +1,18 @@
+<div class="slot-component-wrapper"
+     [ngStyle]="{
+       'padding': slotProps.padding,
+       'gap': slotProps.rowGap,
+       'justify-content': slotProps.justifyContent,
+       'align-items': slotProps.alignItems
+     }">
+
+  <ng-container *ngIf="node.children && node.children.length > 0;">
+    <ng-container *ngFor="let childNode of node.children">
+      <app-component-renderer
+        [node]="childNode"
+        [selectedComponentId]="selectedComponentId"
+        (selectComponent)="selectComponent.emit($event)"
+      ></app-component-renderer>
+    </ng-container>
+  </ng-container>
+</div>

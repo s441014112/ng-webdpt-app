@@ -9,7 +9,7 @@
   <ng-container *ngIf="node.children && node.children.length > 0">
     <ng-container *ngFor="let child of node.children">
       <app-component-renderer
-        [componentNode]="child"
+        [node]="child"
         [selectedComponentId]="selectedComponentId"
         (selectComponent)="selectComponent.emit($event)">
       </app-component-renderer>

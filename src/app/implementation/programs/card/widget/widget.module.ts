@@ -20,6 +20,8 @@ import { DividerComponentComponent } from './components/divider-component/divide
 import { ImageComponentComponent } from './components/image-component/image-component.component';
 import { ButtonComponentComponent } from './components/button-component/button-component.component';
 import { ListComponentComponent } from './components/list-component/list-component.component';
+import { ComponentRenderComponent } from './components/component-render/component-render.component';
+import { SlotComponentComponent } from './components/slot-component/slot-component.component';
 
 
 @NgModule({
@@ -34,7 +36,9 @@ import { ListComponentComponent } from './components/list-component/list-compone
     DividerComponentComponent,
     ImageComponentComponent,
     ButtonComponentComponent,
-    ListComponentComponent
+    ListComponentComponent,
+    ComponentRenderComponent,
+    SlotComponentComponent
   ],
   imports: [
     CommonModule,
@@ -47,7 +51,17 @@ import { ListComponentComponent } from './components/list-component/list-compone
     WidgetRoutingModule
   ],
   exports: [
-    SingleColumnComponent
+    SingleColumnComponent,
+    RootComponentComponent,
+    MultiComponentComponent,
+    HorizontalComponentComponent,
+    TitleComponentComponent,
+    ContentComponentComponent,
+    DividerComponentComponent,
+    ImageComponentComponent,
+    ButtonComponentComponent,
+    ListComponentComponent,
+    SlotComponentComponent
   ]
 })
 export class WidgetModule { }

@@ -20,7 +20,7 @@ export class MultiComponentComponent implements OnInit {
   // 当点击组件时，向上层（CanvasComponent）发送选中事件
   @Output() selectComponent = new EventEmitter<ComponentNodeModel>();
 
-
+  componentTypes = COMPONENT_TYPE
   constructor() { }
 
   ngOnInit(): void {

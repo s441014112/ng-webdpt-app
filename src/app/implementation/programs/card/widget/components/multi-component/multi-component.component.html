@@ -17,7 +17,7 @@
       <ng-container *ngFor="let slot of slotChildren">
         <app-component-renderer
           *ngIf="slot.type === componentTypes.SLOT"
-          [componentNode]="slot"
+          [node]="slot"
           [selectedComponentId]="selectedComponentId"
           (selectComponent)="selectComponent.emit($event)">
         </app-component-renderer>
