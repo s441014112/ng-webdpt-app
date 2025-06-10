@@ -1,0 +1,13 @@
+<div class="image-component-wrapper"
+     [ngClass]="{ 'selected': isSelected(node) }"
+     (click)="onComponentClick($event, node)">
+  <div class="image-container">
+    <img
+      [src]="imageProps?.src"
+      [width]="calculatedWidth"
+      [height]="calculatedHeight"
+      (close)="''"
+      nzFallback="assets/template/IMAGE.png">
+    />
+  </div>
+</div>

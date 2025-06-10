@@ -1,0 +1,22 @@
+<div class="list-component-wrapper"
+     [ngClass]="{ 'selected': isSelected(node) }"
+     (click)="onComponentClick($event, node)"
+     [ngStyle]="{
+       'background-color': listProps.backgroundColor,
+       'padding': listProps.padding,
+       'border-radius': listProps.borderRadius
+     }">
+  <div class="list-columns-container"
+       [ngStyle]="{ 'gap': listProps.rowGap }">
+    <ng-container *ngFor="let childNode of node.children">
+      <app-single-column-component
+        [node]="childNode"
+        [selectedComponentId]="selectedComponentId"
+        (selectComponent)="onChildSelect($event)"
+        (addComponent)="onChildAddComponent($event)"
+        (deleteComponent)="onChildDeleteComponent($event)"
+        (updateComponentProps)="onChildUpdateComponentProps($event)"
+      ></app-single-column-component>
+    </ng-container>
+  </div>
+</div>

@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "postinstall": "npx patch-package@6.5.1 && ngcc",
-    "ng": "ng",
+    "ng": "SET NODE_OPTIONS=--openssl-legacy-provider && ng",
     "start": "SET NODE_OPTIONS=--openssl-legacy-provider && node --max_old_space_size=5120 ./node_modules/@angular/cli/bin/ng serve",
     "start-prod": "ng serve --configuration production",
     "build": "SET NODE_OPTIONS=--openssl-legacy-provider && ng build",

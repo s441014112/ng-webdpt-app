@@ -1,0 +1,12 @@
+<div class="content-component" [ngClass]="{ 'selected': isSelected(node) }" (click)="onComponentClick($event, node)">
+
+  <div class="content-text" [ngStyle]="{
+         'color': contentProps.fontColor,
+         'font-weight': contentProps.fontWeight,
+         'font-size': contentProps.fontSize,
+         'text-align': contentProps.align,
+         '-webkit-line-clamp': contentProps.maxLines
+       }">
+    {{ displayText }}
+  </div>
+</div>

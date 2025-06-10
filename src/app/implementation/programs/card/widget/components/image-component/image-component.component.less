@@ -1,0 +1,45 @@
+// src/app/features/card-editor/components/widgets/basic-components/image/image.component.less
+
+.image-component-wrapper {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 4px 0; // 给选中框一些空间
+
+  border: 1px dashed transparent;
+  transition: border 0.2s ease-in-out;
+  position: relative;
+  display: flex; // 使图片在容器内居中
+  justify-content: center;
+  align-items: center;
+  min-height: 50px; // 确保即使没有图片也有一个可见区域
+
+  &:hover {
+    border-color: rgba(0, 100, 250, 1);
+  }
+
+  &.selected {
+    border: 1px dashed rgba(0, 100, 250, 1);
+  }
+
+  .image-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    min-height: 50px;
+
+    :deep(.ant-image) {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      img {
+        display: block;
+        max-width: 100%;
+        height: auto;
+        object-fit: contain;
+      }
+    }
+  }
+}

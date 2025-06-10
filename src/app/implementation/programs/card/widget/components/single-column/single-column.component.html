@@ -1,0 +1,26 @@
+<div class="single-column-component"
+     [ngStyle]="{
+       'background-color': singleColumnProps.backgroundColor,
+       'padding': singleColumnProps.padding,
+       'gap': singleColumnProps.rowGap,
+       'border-radius': singleColumnProps.borderRadius
+     }"
+     [ngClass]="{ 'selected': isSelected(node) }"
+     (click)="onComponentClick($event, node)">
+
+  <div class="component-actions" *ngIf="isSelected(node)">
+    <span class="component-name">{{ node.name }}</span>
+  </div>
+
+  <ng-container *ngIf="slotChildren.length > 0">
+    <div class="multi-column-slots">
+      <ng-container *ngFor="let slot of slotChildren">
+        <app-component-renderer
+          [componentNode]="slot"
+          [selectedComponentId]="selectedComponentId"
+          (selectComponent)="selectComponent.emit($event)">
+        </app-component-renderer>
+      </ng-container>
+    </div>
+  </ng-container>
+</div>

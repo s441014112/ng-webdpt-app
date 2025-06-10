@@ -1,0 +1,16 @@
+<div class="button-component-wrapper"
+     [ngClass]="{ 'selected': isSelected(node) }"
+     (click)="onComponentClick($event, node)">
+
+  <button nz-button
+          [nzType]="buttonProps.buttonType === 'danger' ? 'primary' : buttonProps.buttonType"
+          [nzSize]="'default'"
+          [nzDanger]="buttonProps.buttonType === 'danger'"
+          [style.width]="calculatedWidth"
+          [style.textAlign]="buttonProps.align"
+          [disabled]="isDisabled"
+          (click)="onButtonClick()"
+          class="custom-button">
+    {{ buttonProps.buttonText || '按钮' }}
+  </button>
+</div>

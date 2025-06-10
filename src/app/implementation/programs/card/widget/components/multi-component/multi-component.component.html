@@ -1,0 +1,27 @@
+<div class="multi-column-component"
+     [ngStyle]="{
+       'background-color': multiColumnProps.backgroundColor,
+       'padding': multiColumnProps.padding,
+       'gap': multiColumnProps.rowGap,
+       'border-radius': multiColumnProps.borderRadius
+     }"
+     [ngClass]="{ 'selected': isSelected(node) }"
+     (click)="onComponentClick($event, node)">
+
+  <div class="component-actions" *ngIf="isSelected(node)">
+    <span class="component-name">{{ node.name }}</span>
+  </div>
+
+  <ng-container *ngIf="slotChildren.length > 0;">
+    <div class="multi-column-slots">
+      <ng-container *ngFor="let slot of slotChildren">
+        <app-component-renderer
+          *ngIf="slot.type === componentTypes.SLOT"
+          [componentNode]="slot"
+          [selectedComponentId]="selectedComponentId"
+          (selectComponent)="selectComponent.emit($event)">
+        </app-component-renderer>
+      </ng-container>
+    </div>
+  </ng-container>
+</div>

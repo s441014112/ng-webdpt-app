@@ -1,0 +1,13 @@
+<div class="divider-component-wrapper"
+     [ngClass]="{ 'selected': isSelected(node) }"
+     (click)="onComponentClick($event, node)">
+
+  <div class="divider-line"
+       [ngStyle]="{
+         'border-top-style': dividerProps.lineType,
+         'border-top-color': dividerProps.color,
+         'padding-top': dividerProps.paddingTop,
+         'padding-bottom': dividerProps.paddingBottom
+       }">
+  </div>
+</div>
