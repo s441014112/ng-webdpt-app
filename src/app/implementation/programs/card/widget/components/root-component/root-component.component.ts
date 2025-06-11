@@ -19,7 +19,7 @@ export class RootComponentComponent implements OnInit {
   }
 
   // 接收当前 Root 组件的节点数据
-  @Input() node!: ComponentNodeModel;
+  @Input() node: ComponentNodeModel | null = null;
   // 接收当前画布中选中的组件ID，用于判断是否选中
   @Input() selectedComponentId: string | null = null;
   // 当点击组件时，向上层（CanvasComponent）发送选中事件
@@ -30,8 +30,8 @@ export class RootComponentComponent implements OnInit {
    * 获取 Root 组件的属性。
    * 这里进行类型断言，确保 props 具有 RootProps 接口的类型。
    */
-  get rootProps(): RootProps {
-    return this.node.props as RootProps;
+  get rootProps(): RootProps | null {
+    return this.node?.props as RootProps || null;
   }
 
   /**

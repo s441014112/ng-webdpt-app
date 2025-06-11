@@ -7,8 +7,8 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzImageModule } from 'ng-zorro-antd/image';
 
 import { DragDropModule } from '@angular/cdk/drag-drop';
-
 import { WidgetRoutingModule } from './widget-routing.module';
+
 import { WidgetComponent } from './widget.component';
 import { SingleColumnComponent } from './components/single-column/single-column.component';
 import { RootComponentComponent } from './components/root-component/root-component.component';

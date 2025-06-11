@@ -5,71 +5,91 @@
   </nz-header>
   <nz-layout>
     <!-- 左侧面板 -->
-    <nz-sider class="sider" [nzWidth]="400" [nzCollapsedWidth]="200" [(nzCollapsed)]="showLeftPanel" [nzTrigger]="null">
+    <nz-sider class="sider" [nzWidth]="400" [nzCollapsedWidth]="120" [(nzCollapsed)]="showLeftPanel" [nzTrigger]="null">
       <div class="component-title">
         <span>组件</span>
         <i class="trigger" nz-icon [nzType]="showLeftPanel ? 'menu-unfold' : 'menu-fold'"
           (click)="showLeftPanel = !showLeftPanel"></i>
       </div>
-      <nz-collapse nzExpandIconPosition="right">
+      <nz-collapse nzExpandIconPosition="right" *ngIf="!showLeftPanel">
         <nz-collapse-panel nzHeader="布局组件" nzActive="true">
-          <div *ngFor="let comp of containerComponents" cdkDrag [cdkDragData]="comp.type"
-            (cdkDragStarted)="onComponentDragStart($event)" class="component-item">
-            {{ comp.name }}
+          <div
+            id="container-component-list" 
+            class="component-group" 
+            cdkDropList 
+            cdkDropListConnectedTo="canvas-root-drop-list"
+            [cdkDropListData]="containerComponents"
+          >
+            <div 
+              *ngFor="let comp of containerComponents" 
+              cdkDrag 
+              [cdkDragData]="comp.type" 
+              class="component-item"
+            >
+              <img class="component-icon" src="assets/template/{{ comp.type }}.png" alt="{{ comp.name }}" />
+              <span>{{ comp.name }}</span>
+            </div>
           </div>
         </nz-collapse-panel>
         <nz-collapse-panel nzHeader="基础组件" nzActive="true">
-          <div *ngFor="let comp of primitiveComponents" cdkDrag [cdkDragData]="comp.type"
-            (cdkDragStarted)="onComponentDragStart($event)" class="component-item">
-            {{ comp.name }}
+          <div
+            id="primitive-component-list" 
+            class="component-group" 
+            cdkDropList 
+            cdkDropListConnectedTo="canvas-root-drop-list"
+            [cdkDropListData]="primitiveComponents"
+          >
+            <div *ngFor="let comp of primitiveComponents" cdkDrag [cdkDragData]="comp.type" class="component-item">
+              <img class="component-icon" src="assets/template/{{ comp.type }}.png" alt="{{ comp.name }}" />
+              <span>{{ comp.name }}</span>
+            </div>
           </div>
         </nz-collapse-panel>
       </nz-collapse>
     </nz-sider>
 
     <!-- 中间画布 -->
-    <nz-content class="canvas-wrapper">
-      <div class="canvas-container">
-        <div class="canvas" cdkDropList (cdkDropListDropped)="drop($event)">
-          <div *ngFor="let item of canvasItems; let i = index" class="canvas-component"
-            [class.selected]="item === selectedItem" (click)="selectItem(item)" [cdkDragDisabled]="true"
-            [attr.data-id]="item.id">
-
-            <span class="component-actions" *ngIf="item === selectedItem">
-              <button nz-button nzSize="small" (click)="addSameComponent(i, $event)">+</button>
-              <button nz-button nzSize="small" (click)="removeItem(i, $event)">-</button>
-            </span>
-
-            {{ item.type }}
-
-            <!-- 子组件递归渲染 -->
-            <div *ngIf="item.children && item.children.length > 0" class="children-container" cdkDropList
-              (cdkDropListDropped)="dropInChild($event, i)">
-              <div *ngFor="let child of item.children; let j = index" class="child-component"
-                [class.selected]="child === selectedItem" (click)="$event.stopPropagation(); selectItem(child)"
-                [cdkDragDisabled]="true">
-                {{ child.type }}
-              </div>
-            </div>
-          </div>
+    <nz-content class="canvas-content">
+      <div class="canvas-wrapper"
+        id="canvas-root-drop-list"
+        cdkDropList
+        [cdkDropListData]="getCanvasDropListData()" 
+        [cdkDropListConnectedTo]="leftSidebarListIds"
+        (cdkDropListDropped)="onDrop($event)"
+      >
+  
+        <ng-container *ngIf="rootNode">
+          <app-root-component
+            [node]="rootNode!" [selectedComponentId]="selectedComponent?.id"
+            (selectComponent)="onSelectComponent($event)"
+            (addComponent)="onAddComponent($event)"
+            (deleteComponent)="onDeleteComponent($event)"
+            (updateComponentProps)="onUpdateComponentProps($event)"
+            (copyComponent)="onCopyComponent($event)"
+          ></app-root-component>
+        </ng-container>
+  
+        <div *ngIf="!rootNode" class="empty-canvas-placeholder">
+          <p>从左侧拖拽组件到此处开始创建卡片</p>
+          <p><i nz-icon nzType="drag" nzTheme="outline"></i></p>
         </div>
+  
       </div>
     </nz-content>
 
     <!-- 右侧面板 -->
-    <nz-sider class="properties-panel" [nzWidth]="400" [nzCollapsedWidth]="200" nzCollapsible nzReverseArrow
+    <nz-sider class="properties-panel" [nzWidth]="400" [nzCollapsedWidth]="120" nzCollapsible nzReverseArrow
       [(nzCollapsed)]="showRightPanel" [nzTrigger]="null">
       <div class="component-title">
         <span>基础配置</span>
         <i class="trigger" nz-icon [nzType]="showRightPanel ? 'menu-unfold' : 'menu-fold'"
           (click)="showRightPanel = !showRightPanel"></i>
       </div>
-      <ng-container *ngIf="selectedItem">
-        <h4>属性配置</h4>
-        <app-property-editor [item]="selectedItem"></app-property-editor>
+      <ng-container *ngIf="selectedComponent && !showRightPanel">
+        <app-property-editor [item]="selectedComponent"></app-property-editor>
       </ng-container>
-      <ng-container *ngIf="!selectedItem">
-        <p>请先选择一个组件</p>
+      <ng-container *ngIf="!selectedComponent">
+        <p>选择元素查看相关配置</p>
       </ng-container>
     </nz-sider>
   </nz-layout>

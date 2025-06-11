@@ -3,7 +3,6 @@ import { Component, OnInit } from '@angular/core';
 import  { Input, Output, EventEmitter } from '@angular/core';
 
 import { ComponentNodeModel, ListProps } from '../../../interface/index';
-import { COMPONENT_TYPE } from '../../../enum';
 
 @Component({
   selector: 'app-list-component',
