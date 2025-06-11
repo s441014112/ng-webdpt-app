@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import  { Input, Output, EventEmitter } from '@angular/core';
+import { CdkDragDrop } from '@angular/cdk/drag-drop'; // 导入 CdkDragDrop 类型
 
 import { ComponentNodeModel, RootProps } from '../../../interface/index';
-
 import { COMPONENT_TYPE } from '../../../enum/index';
 
 @Component({
@@ -24,6 +24,12 @@ export class RootComponentComponent implements OnInit {
   @Input() selectedComponentId: string | null = null;
   // 当点击组件时，向上层（CanvasComponent）发送选中事件
   @Output() selectComponent = new EventEmitter<ComponentNodeModel>();
+
+  // 用于将来自子组件的拖放事件向上冒泡
+  @Output() dropEvent = new EventEmitter<CdkDragDrop<any>>();
+
+  // 新增：接收所有画布内部可连接的 DropList ID 集合
+  @Input() allCanvasDropListIds: string[] = [];
 
 
   /**
@@ -53,6 +59,15 @@ export class RootComponentComponent implements OnInit {
    */
   isSelected(component: ComponentNodeModel): boolean {
     return this.selectedComponentId === component.id;
+  }
+
+  /**
+   * 处理从 RootComponent 自身或其他子组件捕获到的拖放事件。
+   * 将事件向上冒泡到 WidgetComponent。
+   * @param event 拖放事件对象
+   */
+  onChildDrop(event: CdkDragDrop<any>): void {
+    this.dropEvent.emit(event);
   }
 
 }

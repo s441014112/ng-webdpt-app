@@ -1,5 +1,7 @@
 import { Component, OnChanges, SimpleChanges } from '@angular/core';
 import  { Input, Output, EventEmitter } from '@angular/core';
+import { CdkDragDrop } from '@angular/cdk/drag-drop';
+
 
 import { ComponentNodeModel, ImageProps } from '../../../interface/index';
 import { ImageFixedWidthSize, ImageWidthMode } from '../../../enum';
@@ -18,6 +20,12 @@ export class ImageComponentComponent implements OnChanges {
   // 动态计算图片的 nzWidth 和 nzHeight 值，供模板绑定
   calculatedWidth: string | number = '100%';
   calculatedHeight: string | number = 'auto';
+
+  // 新增：接收所有画布内部可连接的 DropList ID 集合 (即使不使用，也需要接收以保持接口一致性)
+  @Input() allCanvasDropListIds: string[] = [];
+  // 新增：用于将拖放事件向上冒泡 (即使不作为容器，也需要有这个 Output 以便 ComponentRenderer 能够订阅)
+  @Output() dropEvent = new EventEmitter<CdkDragDrop<any>>();
+
 
   constructor() { }
 
@@ -57,7 +65,7 @@ export class ImageComponentComponent implements OnChanges {
           this.calculatedWidth = 300;
           this.calculatedHeight = 'auto';
           break;
-        default: 
+        default:
           this.calculatedWidth = props.customWidth ? Math.min(props.customWidth, 420) : 'auto';
           this.calculatedHeight = props.customHeight ? Math.min(props.customHeight, 800) : 'auto';
           break;
@@ -66,7 +74,7 @@ export class ImageComponentComponent implements OnChanges {
   }
 
   onComponentClick(event: MouseEvent, component: ComponentNodeModel): void {
-    event.stopPropagation(); // 阻止事件冒泡
+    event.stopPropagation();
     this.selectComponent.emit(component);
   }
 
@@ -74,4 +82,14 @@ export class ImageComponentComponent implements OnChanges {
     return this.selectedComponentId === component.id;
   }
 
+  /**
+   * 对于基础组件，这个方法通常不会被实际调用来处理 drop 事件，
+   * 但为了与 ComponentRenderer 的接口一致性，它需要存在。
+   * @param event 拖放事件对象
+   */
+  onImageDrop(event: CdkDragDrop<any>): void {
+    // 基础组件通常不会接收拖放，所以这里可以为空或添加日志
+    // console.log('Image component drop event (should not happen usually):', event);
+    this.dropEvent.emit(event); // 仍然向上冒泡，以防万一
+  }
 }

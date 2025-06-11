@@ -1,6 +1,10 @@
 <div class="divider-component-wrapper"
-     [ngClass]="{ 'selected': isSelected(node) }"
-     (click)="onComponentClick($event, node)">
+  [ngClass]="{ 'selected': isSelected(node) }"
+  (click)="onComponentClick($event, node)"
+  cdkDrag
+  [id]="node!.id"
+  [cdkDragData]="node"
+>
 
   <div class="divider-line"
        [ngStyle]="{

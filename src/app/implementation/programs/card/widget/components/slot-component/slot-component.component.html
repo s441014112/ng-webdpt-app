@@ -4,7 +4,17 @@
        'gap': slotProps.rowGap,
        'justify-content': slotProps.justifyContent,
        'align-items': slotProps.alignItems
-     }">
+     }"
+     [ngClass]="{ 'selected': isSelected(node) }"
+     (click)="onComponentClick($event, node)"
+     cdkDrag
+     [id]="node!.id"
+     [cdkDragData]="node"
+     cdkDropList
+     [cdkDropListData]="node!.children"
+     [cdkDropListConnectedTo]="allCanvasDropListIds"
+     (cdkDropListDropped)="onSlotDrop($event)"
+>
 
   <ng-container *ngIf="node.children && node.children.length > 0;">
     <ng-container *ngFor="let childNode of node.children">
@@ -12,7 +22,10 @@
         [node]="childNode"
         [selectedComponentId]="selectedComponentId"
         (selectComponent)="selectComponent.emit($event)"
+        (dropEvent)="onSlotDrop($event)"
+        [allCanvasDropListIds]="allCanvasDropListIds"
       ></app-component-renderer>
     </ng-container>
   </ng-container>
+
 </div>

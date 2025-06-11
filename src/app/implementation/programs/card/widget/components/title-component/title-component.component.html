@@ -1,12 +1,16 @@
 <div class="title-component"
-     [ngStyle]="{
-       'color': titleProps.fontColor,
-       'text-align': titleProps.align,
-       'font-size': titleProps.fontSize,
-       'font-weight': titleProps.fontWeight
-     }"
-     [ngClass]="{ 'selected': isSelected(node) }"
-     (click)="onComponentClick($event, node)">
+  [ngStyle]="{
+    'color': titleProps.fontColor,
+    'text-align': titleProps.align,
+    'font-size': titleProps.fontSize,
+    'font-weight': titleProps.fontWeight
+  }"
+  [ngClass]="{ 'selected': isSelected(node) }"
+  (click)="onComponentClick($event, node)"
+  cdkDrag
+  [id]="node!.id"
+  [cdkDragData]="node"
+>
   <div class="title-content">
     {{ titleProps.text || '默认标题内容' }}
   </div>

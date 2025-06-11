@@ -5,7 +5,15 @@
        'border-radius': horizontalProps.borderRadius
      }"
      [ngClass]="{ 'selected': isSelected(node) }"
-     (click)="onComponentClick($event, node)">
+     (click)="onComponentClick($event, node)"
+     cdkDrag
+     [id]="node!.id"
+     [cdkDragData]="node"
+     cdkDropList
+     [cdkDropListData]="node!.children"
+     [cdkDropListConnectedTo]="allCanvasDropListIds"
+     (cdkDropListDropped)="onHorizontalDrop($event)"
+>
 
   <div class="component-actions" *ngIf="isSelected(node)">
     <span class="component-name">{{ node.name }}</span>
@@ -18,7 +26,9 @@
           *ngIf="slot.type === componentTypes.SLOT"
           [node]="slot"
           [selectedComponentId]="selectedComponentId"
-          (selectComponent)="selectComponent.emit($event)">
+          (selectComponent)="selectComponent.emit($event)"
+          (dropEvent)="onHorizontalDrop($event)"
+          [allCanvasDropListIds]="allCanvasDropListIds">
         </app-component-renderer>
       </ng-container>
     </div>

@@ -15,6 +15,7 @@ import {
 } from '@angular/core';
 import { ComponentNodeModel } from '../../../interface/index';
 import { COMPONENT_TYPE } from '../../../enum';
+import { CdkDragDrop } from '@angular/cdk/drag-drop'; // 导入 CdkDragDrop 类型
 
 // 导入所有可能被动态渲染的组件
 import { SingleColumnComponent } from '../single-column/single-column.component';
@@ -37,17 +38,20 @@ import { SlotComponentComponent } from '../slot-component/slot-component.compone
 export class ComponentRenderComponent implements OnInit, OnChanges, OnDestroy {
   @Input() node!: ComponentNodeModel;
   @Input() selectedComponentId: string | null = null;
+  // 新增：接收所有画布内部可连接的 DropList ID 集合
+  @Input() allCanvasDropListIds: string[] = [];
 
-  // 向上冒泡事件，由 CardEditorComponent 统一处理
+
   @Output() selectComponent = new EventEmitter<ComponentNodeModel>();
+  // 新增：用于将拖放事件向上冒泡
+  @Output() dropEvent = new EventEmitter<CdkDragDrop<any>>();
 
 
   @ViewChild('dynamicComponentContainer', { read: ViewContainerRef, static: true })
   container!: ViewContainerRef;
+  private componentRef: any; // 保存动态创建的组件实例引用
 
-  private componentRef: any; // 用于存储动态创建的组件实例引用
-
-  // 组件类型到实际 Angular 组件类的映射
+  // 映射组件类型到实际的组件类
   private componentMap: { [key: string]: Type<any> } = {
     [COMPONENT_TYPE.SINGLE_COLUMN]: SingleColumnComponent,
     [COMPONENT_TYPE.MULTI_COLUMN]: MultiComponentComponent,
@@ -64,21 +68,33 @@ export class ComponentRenderComponent implements OnInit, OnChanges, OnDestroy {
   constructor(
     private componentFactoryResolver: ComponentFactoryResolver,
     private injector: Injector
-  ) {}
+  ) { }
 
   ngOnInit(): void {
-    this.loadComponent();
+    // 初始渲染组件
+    this.renderComponent();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['node'] || changes['selectedComponentId']) {
-      this.loadComponent();
+    // 当输入属性发生变化时，如果 node 发生变化，则重新渲染组件或更新其输入
+    if (changes['node'] || changes['selectedComponentId'] || changes['allCanvasDropListIds']) {
+      // 只有当组件类型实际发生变化时才重新创建组件
+      // 否则，只更新输入属性
+      if (changes['node'] && changes['node'].previousValue?.type !== changes['node'].currentValue?.type) {
+        this.renderComponent();
+      } else {
+        this.updateComponentInputs();
+      }
     }
   }
 
-  loadComponent(): void {
-    if (!this.node || !this.node.type) {
-      // 清除可能存在的组件或渲染占位符
+  ngOnDestroy(): void {
+    // 清理动态创建的组件，防止内存泄漏
+    this.clearComponent();
+  }
+
+  private renderComponent(): void {
+    if (!this.node) {
       this.clearComponent();
       return;
     }
@@ -87,7 +103,6 @@ export class ComponentRenderComponent implements OnInit, OnChanges, OnDestroy {
 
     if (componentType) {
       // 检查是否是同一个组件节点，避免不必要的销毁和重建
-      // 如果已经渲染了相同的组件类型且是同一个节点，则只更新 input 属性
       if (this.componentRef && this.componentRef.instance.node?.id === this.node.id && this.componentRef.instance.constructor === componentType) {
         this.updateComponentInputs();
       } else {
@@ -105,9 +120,14 @@ export class ComponentRenderComponent implements OnInit, OnChanges, OnDestroy {
         if (this.componentRef.instance.selectComponent) {
           this.componentRef.instance.selectComponent.subscribe((event: ComponentNodeModel) => this.selectComponent.emit(event));
         }
+
+        // 新增：订阅动态组件的 dropEvent，并向上冒泡
+        if (this.componentRef.instance.dropEvent) {
+          this.componentRef.instance.dropEvent.subscribe((event: CdkDragDrop<any>) => this.dropEvent.emit(event));
+        }
       }
     } else {
-      console.warn(`渲染出错: ${this.node.type}.`);
+      console.warn(`渲染出错: 未知组件类型 ${this.node.type}.`);
       this.clearComponent();
     }
   }
@@ -116,6 +136,8 @@ export class ComponentRenderComponent implements OnInit, OnChanges, OnDestroy {
     if (this.componentRef) {
       this.componentRef.instance.node = this.node;
       this.componentRef.instance.selectedComponentId = this.selectedComponentId;
+      // 新增：传递 allCanvasDropListIds 给动态组件实例
+      this.componentRef.instance.allCanvasDropListIds = this.allCanvasDropListIds;
     }
   }
 
@@ -124,11 +146,5 @@ export class ComponentRenderComponent implements OnInit, OnChanges, OnDestroy {
       this.componentRef.destroy();
       this.componentRef = null;
     }
-    // 清除容器内的所有内容，包括占位符文本或之前动态创建的组件
-    this.container.clear();
-  }
-
-  ngOnDestroy(): void {
-    this.clearComponent();
   }
 }

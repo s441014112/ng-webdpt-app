@@ -5,13 +5,21 @@
        'gap': rootProps.rowGap
      }"
      [ngClass]="{ 'selected': isSelected(node) }"
-     (click)="onComponentClick($event, node)">
+     (click)="onComponentClick($event, node)"
+     cdkDropList
+     [id]="node!.id"
+     [cdkDropListData]="node!.children"
+     [cdkDropListConnectedTo]="allCanvasDropListIds"
+     (cdkDropListDropped)="onChildDrop($event)"
+>
   <ng-container *ngIf="node?.children && node?.children?.length > 0">
     <ng-container *ngFor="let child of node?.children">
       <app-component-renderer
         [node]="child"
         [selectedComponentId]="selectedComponentId"
-        (selectComponent)="selectComponent.emit($event)">
+        (selectComponent)="selectComponent.emit($event)"
+        (dropEvent)="onChildDrop($event)"
+        [allCanvasDropListIds]="allCanvasDropListIds">
       </app-component-renderer>
     </ng-container>
   </ng-container>

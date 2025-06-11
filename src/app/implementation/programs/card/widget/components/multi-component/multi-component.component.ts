@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 
 import  { Input, Output, EventEmitter } from '@angular/core';
+import { CdkDragDrop } from '@angular/cdk/drag-drop'; // 导入 CdkDragDrop 类型
+
 
 import { ComponentNodeModel, MultiColumnProps } from '../../../interface/index';
 
@@ -19,6 +21,12 @@ export class MultiComponentComponent implements OnInit {
   @Input() selectedComponentId: string | null = null;
   // 当点击组件时，向上层（CanvasComponent）发送选中事件
   @Output() selectComponent = new EventEmitter<ComponentNodeModel>();
+
+  // 新增：接收所有画布内部可连接的 DropList ID 集合
+  @Input() allCanvasDropListIds: string[] = [];
+  // 新增：用于将拖放事件向上冒泡
+  @Output() dropEvent = new EventEmitter<CdkDragDrop<any>>();
+
 
   componentTypes = COMPONENT_TYPE
   constructor() { }
@@ -61,5 +69,14 @@ export class MultiComponentComponent implements OnInit {
    */
   isSelected(component: ComponentNodeModel): boolean {
     return this.selectedComponentId === component.id;
+  }
+
+  /**
+   * 处理从 MultiColumnComponent 自身捕获到的拖放事件。
+   * 将事件向上冒泡。
+   * @param event 拖放事件对象
+   */
+  onMultiColumnDrop(event: CdkDragDrop<any>): void {
+    this.dropEvent.emit(event);
   }
 }
