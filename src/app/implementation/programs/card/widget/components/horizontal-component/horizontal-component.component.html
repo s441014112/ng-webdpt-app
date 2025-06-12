@@ -2,7 +2,8 @@
      [ngStyle]="{
        'background-color': horizontalProps.backgroundColor,
        'padding': horizontalProps.padding,
-       'border-radius': horizontalProps.borderRadius
+       'border-radius': horizontalProps.borderRadius,
+       'gap': horizontalProps.rowGap
      }"
      [ngClass]="{ 'selected': isSelected(node) }"
      (click)="onComponentClick($event, node)"
