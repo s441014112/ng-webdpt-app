@@ -1,4 +1,4 @@
-import { Component, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, OnInit, SimpleChanges } from '@angular/core';
 import  { Input, Output, EventEmitter } from '@angular/core';
 import { CdkDragDrop } from '@angular/cdk/drag-drop';
 
@@ -11,15 +11,11 @@ import { ImageFixedWidthSize, ImageWidthMode } from '../../../enum';
   templateUrl: './image-component.component.html',
   styleUrls: ['./image-component.component.less']
 })
-export class ImageComponentComponent implements OnChanges {
+export class ImageComponentComponent implements OnInit {
 
   @Input() node!: ComponentNodeModel;
   @Input() selectedComponentId: string | null = null;
   @Output() selectComponent = new EventEmitter<ComponentNodeModel>();
-
-  // 动态计算图片的 nzWidth 和 nzHeight 值，供模板绑定
-  calculatedWidth: string | number = '100%';
-  calculatedHeight: string | number = 'auto';
 
   // 新增：接收所有画布内部可连接的 DropList ID 集合 (即使不使用，也需要接收以保持接口一致性)
   @Input() allCanvasDropListIds: string[] = [];
@@ -31,47 +27,56 @@ export class ImageComponentComponent implements OnChanges {
 
   ngOnInit(): void {}
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['node']) {
-      // 当 node 变化时，重新计算图片尺寸
-      this.updateImageDimensions();
-    }
-  }
-
   get imageProps(): ImageProps {
     return this.node.props as ImageProps;
   }
 
-  /**
-   * 根据 imageProps 计算图片的 nzWidth 和 nzHeight。
-   */
-  private updateImageDimensions(): void {
-    const props = this.imageProps;
-
-    if (props.widthMode === ImageWidthMode.FULL) {
-      this.calculatedWidth = '100%';
-      this.calculatedHeight = 'auto'; // 宽度铺满时，高度自动
+  get calculatedWidth(): number | string {
+    let result
+    if (this.node.props.widthMode === ImageWidthMode.FULL) {
+      result = '100%';
     } else {
-      switch (props.fixedWidthSize) {
+      switch (this.node.props.fixedWidthSize) {
         case ImageFixedWidthSize.SMALL:
-          this.calculatedWidth = 100;
-          this.calculatedHeight = 'auto';
+          result = 100;
           break;
         case ImageFixedWidthSize.NORMAL:
-          this.calculatedWidth = 200;
-          this.calculatedHeight = 'auto';
+          result = 200;
           break;
         case ImageFixedWidthSize.LARGE:
-          this.calculatedWidth = 300;
-          this.calculatedHeight = 'auto';
+          result = 300;
           break;
         default:
-          this.calculatedWidth = props.customWidth ? Math.min(props.customWidth, 420) : 'auto';
-          this.calculatedHeight = props.customHeight ? Math.min(props.customHeight, 800) : 'auto';
+          result = this.node.props.customWidth ? Math.min(this.node.props.customWidth, 420) : 'auto';
           break;
       }
     }
+    return result;
   }
+
+  get calculatedHeight(): number | string {
+    let result
+    if (this.node.props.widthMode === ImageWidthMode.FULL) {
+      result = '100%';
+    } else {
+      switch (this.node.props.fixedWidthSize) {
+        case ImageFixedWidthSize.SMALL:
+          result = 50;
+          break;
+        case ImageFixedWidthSize.NORMAL:
+          result = 60;
+          break;
+        case ImageFixedWidthSize.LARGE:
+          result = 70;
+          break;
+        default:
+          result = this.node.props.customHeight ? Math.min(this.node.props.customHeight, 800) : 'auto';
+          break;
+      }
+    }
+    return result;
+  }
+
 
   onComponentClick(event: MouseEvent, component: ComponentNodeModel): void {
     event.stopPropagation();

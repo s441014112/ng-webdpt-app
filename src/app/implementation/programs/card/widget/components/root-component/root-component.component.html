@@ -10,7 +10,6 @@
      [id]="node!.id"
      [cdkDropListData]="node!.children"
      [cdkDropListConnectedTo]="allCanvasDropListIds"
-     (cdkDropListDropped)="onChildDrop($event)"
 >
   <ng-container *ngIf="node?.children && node?.children?.length > 0">
     <ng-container *ngFor="let child of node?.children">
@@ -19,7 +18,8 @@
         [selectedComponentId]="selectedComponentId"
         (selectComponent)="selectComponent.emit($event)"
         (dropEvent)="onChildDrop($event)"
-        [allCanvasDropListIds]="allCanvasDropListIds">
+        [allCanvasDropListIds]="allCanvasDropListIds"
+      >
       </app-component-renderer>
     </ng-container>
   </ng-container>

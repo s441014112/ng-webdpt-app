@@ -10,9 +10,6 @@
      cdkDrag
      [id]="node!.id"
      [cdkDragData]="node"
-     cdkDropList
-     [cdkDropListData]="node!.children"
-     [cdkDropListConnectedTo]="allCanvasDropListIds"
      (cdkDropListDropped)="onListDrop($event)"
 >
 <ng-container *ngIf="slotChildren.length > 0;">
@@ -23,7 +20,8 @@
         [selectedComponentId]="selectedComponentId"
         (selectComponent)="selectComponent.emit($event)"
         (dropEvent)="onListDrop($event)"
-        [allCanvasDropListIds]="allCanvasDropListIds">
+        [allCanvasDropListIds]="allCanvasDropListIds"
+      >
       </app-component-renderer>
     </ng-container>
   </ng-container>

@@ -4,8 +4,8 @@ import { ActivatedRoute } from '@angular/router'
 
 import * as uuid from 'uuid';
 
-import { ComponentNodeModel, RootProps } from '../interface';
-import { COMPONENT_TYPE } from '../enum';
+import { ComponentNodeModel, RootProps, SingleColumnProps, MultiColumnProps, HorizontalProps, ListProps, SlotProps, TitleProps, ContentProps, DividerProps, ImageProps, ButtonProps } from '../interface';
+import { COMPONENT_TYPE, ButtonType, ButtonWidthMode, ContentFontSize, DividerLineType, ImageFixedWidthSize, ImageWidthMode, AlignType } from '../enum'; // 确保导入所有必要的枚举
 
 @Component({
   selector: 'app-widget',
@@ -40,495 +40,627 @@ export class WidgetComponent implements OnInit {
     { type: COMPONENT_TYPE.BUTTON, name: '按钮' },
   ];
 
-  // 左侧可用的组件类型列表
-  leftSidebarListIds: string[] = ['container-component-list', 'primitive-component-list'];
+  // 画布中的根节点
+  rootNode: ComponentNodeModel | null = null;
+  // 当前选中的组件
+  selectedComponent: ComponentNodeModel | null = null;
 
-
-  // 左右侧折叠面板是否展开
+  // 面板显示/隐藏
   showLeftPanel = false;
   showRightPanel = false;
 
-  // 当前画布上所有的组件集合
-  canvasItems: ComponentNodeModel[] = [];
+  // 用于在画布中的所有可拖拽区域之间建立连接
+  allCanvasDropListIds: string[] = ['canvas-root-drop-list'];
 
-  // 整个画布的组件树数据，以 RootComponent 为根
-  rootNode: ComponentNodeModel = null;
-
-  // 当前选中的组件节点
-  selectedComponent: ComponentNodeModel | null = null;
 
   constructor(private route: ActivatedRoute) { }
 
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
-      this.templateId = params['id'] || '无ID';
-      this.templateName = params['name'] || '未命名模板';
+      this.templateId = params['templateId'] || '';
+      this.templateName = params['templateName'] || '新建卡片模板';
     });
 
-    // 初始时画布空白
-    this.selectedComponent = null;
+    // 假设从某个服务加载已有的模板数据
+    // this.loadTemplate();
   }
 
-  // 新增方法：为画布的 cdkDropListData 提供一个始终有效的数组
-  getCanvasDropListData(): ComponentNodeModel[] {
-    // 如果 rootNode 存在，则返回其 children；否则返回一个空数组。
-    // 这确保了 cdkDropList 始终有一个有效的 data 数组，即使是空的，也能被正确激活。
-    return this.rootNode?.children || [];
+  // 组件选中事件处理
+  onSelectComponent(component: ComponentNodeModel): void {
+    this.selectedComponent = component;
+    console.log('Selected Component:', this.selectedComponent);
   }
 
-  isLayoutComponent(type: string): boolean {
-    return [COMPONENT_TYPE.SINGLE_COLUMN, COMPONENT_TYPE.MULTI_COLUMN, COMPONENT_TYPE.HORIZONTAL, COMPONENT_TYPE.LIST].includes(type as COMPONENT_TYPE);
+  // 保存模板
+  saveTemplate(): void {
+    console.log('Saving template:', JSON.stringify(this.rootNode, null, 2));
+    // 这里可以添加将 this.rootNode 发送到后端保存的逻辑
   }
 
   /**
-   * 工具方法：在组件树中查找指定ID的组件
-   * @param componentId 要查找的组件ID
-   * @param currentNode 当前搜索的节点 (递归用)
-   * @returns 找到的组件节点及其父节点，或者 null
+   * 创建并初始化 Root 组件。
+   * 如果 rootNode 不存在，则创建一个新的 Root 组件。
    */
-  findComponentInTree(componentId: string, currentNode: ComponentNodeModel = this.rootNode): { node: ComponentNodeModel, parent: ComponentNodeModel | null } | null {
-    if (currentNode.id === componentId) {
-      return { node: currentNode, parent: null }; // 根节点无父节点
+  createRootComponent(): ComponentNodeModel {
+    return {
+      id: uuid.v4(),
+      type: COMPONENT_TYPE.ROOT,
+      name: '根容器',
+      props: {
+        backgroundColor: '#ffffff',
+        rowGap: '8px',
+        padding: '8px'
+      } as RootProps,
+      children: []
+    };
+  }
+
+  // 添加组件到画布 (通过点击左侧组件列表按钮)
+  addComponentToCanvas(componentType: COMPONENT_TYPE): void {
+    // 如果画布中没有 Root 组件，先创建一个
+    if (!this.rootNode) {
+      this.rootNode = this.createRootComponent();
+      this.allCanvasDropListIds.push(this.rootNode.id);
     }
 
-    if (currentNode.children) {
-      for (const child of currentNode.children) {
-        if (child.id === componentId) {
-          return { node: child, parent: currentNode };
-        }
-        const found = this.findComponentInTree(componentId, child);
-        if (found) {
-          return found;
-        }
+    if (componentType === COMPONENT_TYPE.TITLE) {
+      const existingTitle = this.findComponentByType(this.rootNode, COMPONENT_TYPE.TITLE);
+      if (existingTitle) {
+        alert('画布中已存在标题组件，一个画布只能有一个标题组件。');
+        return;
       }
     }
-    return null;
-  }
 
-  /**
-   * 工具方法：在组件树中查找指定ID的组件（只返回节点）
-   * @param componentId 要查找的组件ID
-   * @param currentNode 当前搜索的节点 (递归用)
-   * @returns 找到的组件节点，或者 null
-   */
-  getComponentById(componentId: string, currentNode: ComponentNodeModel = this.rootNode): ComponentNodeModel | null {
-    if (currentNode.id === componentId) {
-      return currentNode;
-    }
-    if (currentNode.children) {
-      for (const child of currentNode.children) {
-        const found = this.getComponentById(componentId, child);
-        if (found) {
-          return found;
-        }
-      }
-    }
-    return null;
-  }
-
-
-  /**
-   * 处理来自 RootComponent 或其子组件的 selectComponent 事件
-   * @param selectedNode 被选中的组件节点
-   */
-  onSelectComponent(selectedNode: ComponentNodeModel): void {
-    console.log('Component selected:', selectedNode.name, selectedNode.id);
-    this.selectedComponent = selectedNode;
-  }
-
-  /**
-   * 处理添加组件事件
-   * @param event 包含父节点、要添加的组件类型和可选索引
-   */
-  onAddComponent(event: { parent: ComponentNodeModel, componentType: COMPONENT_TYPE, index?: number }): void {
-    console.log('Add component event received:', event);
-
-    // 从实际的组件树中查找父节点，而不是直接使用传入的 event.parent
-    // 这是为了确保操作的是当前最新状态的组件树
-    const parentNodeResult = this.findComponentInTree(event.parent.id);
-    if (!parentNodeResult || !parentNodeResult.node) {
-      console.error('Parent node not found for addComponent:', event.parent.id);
-      return;
-    }
-    const parentNode = parentNodeResult.node;
-
-    // 确保父节点有 children 数组
-    if (!parentNode.children) {
-      parentNode.children = [];
-    }
-
-    // 根据组件类型创建新的组件节点
-    const newComponent: ComponentNodeModel = this.createNewComponentNode(event.componentType);
+    const newComponent = this.createComponentNode(componentType);
 
     if (newComponent) {
-      if (event.index !== undefined && event.index >= 0 && event.index <= parentNode.children.length) {
-        parentNode.children.splice(event.index, 0, newComponent);
+      if (componentType === COMPONENT_TYPE.TITLE) {
+        // 标题组件固定放在 Root 的 children 的最前方
+        this.rootNode.children = [newComponent, ...(this.rootNode.children || [])];
       } else {
-        parentNode.children.push(newComponent);
+        // 其他组件添加到 Root 的 children 末尾
+        this.rootNode.children = [...(this.rootNode.children || []), newComponent];
       }
       this.selectedComponent = newComponent;
-      // 触发变更检测
-      this.rootNode = { ...this.rootNode! };
-      console.log('New component added:', newComponent);
+      this.updateAllCanvasDropListIds(this.rootNode);
     }
   }
 
-  /**
-   * 处理删除组件事件
-   * @param event 包含要删除的父节点和子节点
-   */
-  onDeleteComponent(event: { parent: ComponentNodeModel | null, componentToDelete: ComponentNodeModel }): void {
-    console.log('Delete component event received:', event);
+  // 删除组件
+  onDeleteComponent(componentId: string): void {
+    if (!this.rootNode) return;
 
-    let targetParentNode: ComponentNodeModel | null = null;
-
-    if (event.parent) {
-      const parentNodeResult = this.findComponentInTree(event.parent.id);
-      if (parentNodeResult) {
-        targetParentNode = parentNodeResult.node;
-      }
-    } else if (event.componentToDelete.id === this.rootNode.id) {
-        // 如果要删除的是根节点，通常不允许，或者有特殊处理
-        console.warn('Attempted to delete root node. Operation denied.');
-        return;
-    }
-
-    if (targetParentNode && targetParentNode.children) {
-      const initialLength = targetParentNode.children.length;
-      targetParentNode.children = targetParentNode.children.filter(
-        child => child.id !== event.componentToDelete.id
-      );
-
-      if (targetParentNode.children.length < initialLength) {
-        console.log('Component deleted:', event.componentToDelete.id);
-        // 如果删除的是当前选中组件，则选中其父组件或根组件
-        if (this.selectedComponent?.id === event.componentToDelete.id) {
-          this.selectedComponent = targetParentNode; // 选中父组件
+    const deleteRecursive = (nodes: ComponentNodeModel[] | undefined, idToDelete: string): ComponentNodeModel[] | undefined => {
+      if (!nodes) return undefined;
+      return nodes.filter(node => {
+        if (node.id === idToDelete) {
+          return false;
         }
-        this.rootNode = { ...this.rootNode }; // 浅拷贝触发Angular变更检测
-      } else {
-        console.warn('Component to delete not found in parent children:', event.componentToDelete.id);
-      }
-    } else {
-      console.warn('Parent node not found or has no children for deleteComponent:', event.parent?.id);
+        if (node.children) {
+          node.children = deleteRecursive(node.children, idToDelete);
+        }
+        return true;
+      });
+    };
+
+    this.rootNode.children = deleteRecursive(this.rootNode.children, componentId);
+    if (this.selectedComponent?.id === componentId) {
+      this.selectedComponent = null;
     }
+    this.rootNode = { ...this.rootNode! }; // 触发变更检测
+    this.updateAllCanvasDropListIds(this.rootNode); // 更新所有可拖拽区域的ID
   }
 
-  /**
-   * 处理更新组件属性事件
-   * @param event 包含组件ID和新的属性
-   */
-  onUpdateComponentProps(event: { componentId: string, newProps: Partial<any> }): void {
-    console.log('Update props event received:', event);
-    const componentToUpdate = this.getComponentById(event.componentId);
-    if (componentToUpdate) {
-      componentToUpdate.props = { ...componentToUpdate.props, ...event.newProps };
-      console.log('Component props updated:', componentToUpdate.id, componentToUpdate.props);
-      this.rootNode = { ...this.rootNode }; // 浅拷贝触发Angular变更检测
-    } else {
-      console.warn('Component not found for updateComponentProps:', event.componentId);
-    }
-  }
-
-  /**
-   * 处理复制组件事件
-   * @param componentToCopy 要复制的组件节点
-   */
+  // 复制组件
   onCopyComponent(componentToCopy: ComponentNodeModel): void {
-    console.log('Copy component event received:', componentToCopy);
+    if (!this.rootNode) return;
 
-    const result = this.findComponentInTree(componentToCopy.id);
-    if (!result) {
-      console.error('Component to copy not found in tree:', componentToCopy.id);
-      return;
-    }
-    const { node: originalNode, parent: parentNode } = result;
+    // 深度复制组件节点
+    const copiedComponent = JSON.parse(JSON.stringify(componentToCopy));
 
-    if (!parentNode || !parentNode.children) {
-      console.error('Parent node not found or has no children for copy operation.', originalNode);
-      return;
-    }
+    // 为复制的组件及其所有子组件生成新的 UUID
+    const assignNewIds = (node: ComponentNodeModel) => {
+      node.id = uuid.v4();
+      if (node.children) {
+        node.children.forEach(child => assignNewIds(child));
+      }
+    };
+    assignNewIds(copiedComponent);
 
-    // 深拷贝原始节点，并为新节点及其所有子节点生成新的UUID
-    const copiedNode = this.deepCopyComponentNode(originalNode);
-    console.log('Copied node:', copiedNode);
+    // 找到原始组件的父级，并将复制的组件添加到其旁边
+    const findAndInsert = (nodes: ComponentNodeModel[] | undefined, targetId: string, newComponent: ComponentNodeModel): boolean => {
+      if (!nodes) return false;
+      const index = nodes.findIndex(node => node.id === targetId);
+      if (index !== -1) {
+        nodes.splice(index + 1, 0, newComponent);
+        return true;
+      }
+      for (const node of nodes) {
+        if (node.children && findAndInsert(node.children, targetId, newComponent)) {
+          return true;
+        }
+      }
+      return false;
+    };
 
-    // 找到原始节点在父节点 children 数组中的索引
-    const originalIndex = parentNode.children.findIndex(child => child.id === originalNode.id);
-
-    if (originalIndex !== -1) {
-      // 将复制的节点插入到原始节点之后
-      parentNode.children.splice(originalIndex + 1, 0, copiedNode);
-      this.selectedComponent = copiedNode; // 选中新复制的组件
-      this.rootNode = { ...this.rootNode }; // 浅拷贝触发Angular变更检测
-      console.log('Component copied:', copiedNode.id);
+    if (findAndInsert(this.rootNode.children, componentToCopy.id, copiedComponent)) {
+      this.rootNode = { ...this.rootNode! }; // 触发变更检测
+      this.selectedComponent = copiedComponent; // 选中复制的组件
+      this.updateAllCanvasDropListIds(this.rootNode); // 更新所有可拖拽区域的ID
     } else {
-      console.error('Original component not found in parent children for copy operation.');
+      console.warn('Could not find the component to copy in the tree.');
     }
   }
 
-  /**
-   * 递归深拷贝组件节点，并为所有节点生成新的UUID
-   * @param node 要拷贝的原始节点
-   * @returns 拷贝后的新节点
-   */
-  private deepCopyComponentNode(node: ComponentNodeModel): ComponentNodeModel {
-    const newNode: ComponentNodeModel = {
-      ...node,
-      id: this.generateId(), // 生成新的ID
-      children: [] // 先清空 children，再递归复制
+
+  // 更新组件属性
+  onUpdateComponentProps(updatedProps: { id: string, props: Record<string, any> }): void {
+    if (!this.rootNode) return;
+
+    const updateRecursive = (nodes: ComponentNodeModel[] | undefined): boolean => {
+      if (!nodes) return false;
+      for (const node of nodes) {
+        if (node.id === updatedProps.id) {
+          node.props = { ...node.props, ...updatedProps.props };
+          this.rootNode = { ...this.rootNode! }; // 触发变更检测
+          this.selectedComponent = node; // 更新选中组件的属性
+          return true;
+        }
+        if (node.children && updateRecursive(node.children)) {
+          return true;
+        }
+      }
+      return false;
     };
 
-    // 确保 props 也是深拷贝，避免引用问题
-    if (node.props) {
-        newNode.props = JSON.parse(JSON.stringify(node.props));
-    }
-
-
-    if (node.children && node.children.length > 0) {
-      newNode.children = node.children.map(child => this.deepCopyComponentNode(child));
-    }
-    return newNode;
-  }
-
-
-  /**
-   * 创建一个新的组件节点，带默认属性和ID
-   * @param type 组件类型
-   * @returns 新的组件节点
-   */
-  private createNewComponentNode(type: COMPONENT_TYPE): ComponentNodeModel {
-    const newId = this.generateId();
-    let defaultProps: Record<string, any> = {};
-    let children: ComponentNodeModel[] = [];
-    let name: string = '';
-
-    switch (type) {
-      case COMPONENT_TYPE.SINGLE_COLUMN:
-        name = '单列布局';
-        defaultProps = {
-          backgroundColor: '#ffffff', padding: '8px', rowGap: '8px', borderRadius: '0px'
-        };
-        children = [this.createNewComponentNode(COMPONENT_TYPE.SLOT)]; // 默认包含一个插槽
-        break;
-      case COMPONENT_TYPE.MULTI_COLUMN:
-        name = '多列布局';
-        defaultProps = {
-          backgroundColor: '#ffffff', padding: '8px', rowGap: '8px', borderRadius: '0px'
-        };
-        children = [
-          this.createNewComponentNode(COMPONENT_TYPE.SLOT),
-          this.createNewComponentNode(COMPONENT_TYPE.SLOT),
-          this.createNewComponentNode(COMPONENT_TYPE.SLOT)
-        ]; // 默认包含三个插槽
-        break;
-      case COMPONENT_TYPE.HORIZONTAL:
-        name = '横向滑动';
-        defaultProps = {
-          backgroundColor: '#ffffff', padding: '8px', borderRadius: '0px'
-        };
-        children = [
-          this.createNewComponentNode(COMPONENT_TYPE.SLOT),
-          this.createNewComponentNode(COMPONENT_TYPE.SLOT),
-          this.createNewComponentNode(COMPONENT_TYPE.SLOT)
-        ]; // 默认包含三个插槽
-        break;
-      case COMPONENT_TYPE.LIST:
-        name = '列表布局';
-        defaultProps = {
-          backgroundColor: '#ffffff', padding: '8px', rowGap: '8px', borderRadius: '0px'
-        };
-        children = [
-          this.createNewComponentNode(COMPONENT_TYPE.SINGLE_COLUMN),
-          this.createNewComponentNode(COMPONENT_TYPE.SINGLE_COLUMN),
-          this.createNewComponentNode(COMPONENT_TYPE.SINGLE_COLUMN)
-        ]; // 默认包含三个单列组件
-        break;
-      case COMPONENT_TYPE.SLOT:
-        name = '插槽';
-        defaultProps = {
-          alignItems: 'flex-start', justifyContent: 'flex-start', rowGap: '4px', padding: '4px'
-        };
-        children = [];
-        break;
-      case COMPONENT_TYPE.TITLE:
-        name = '标题';
-        defaultProps = {
-          text: '这是一个标题', fontColor: '#333333', fontSize: '18px', fontWeight: 'bold', align: 'center'
-        };
-        break;
-      case COMPONENT_TYPE.CONTENT:
-        name = '内容';
-        defaultProps = {
-          text: '这是一段文本内容。', fontColor: '#666666', fontSize: '14px', fontWeight: 'normal', align: 'left', maxLines: 0, loopRender: false
-        };
-        break;
-      case COMPONENT_TYPE.DIVIDER:
-        name = '分割线';
-        defaultProps = {
-          color: '#e0e0e0', paddingTop: '8px', paddingBottom: '8px', lineType: 'solid'
-        };
-        break;
-      case COMPONENT_TYPE.IMAGE:
-        name = '图片';
-        defaultProps = {
-          src: 'https://via.placeholder.com/150', widthMode: 'full', fixedWidthSize: '', customWidth: 0, customHeight: 0, loopRender: false
-        };
-        break;
-      case COMPONENT_TYPE.BUTTON:
-        name = '按钮';
-        defaultProps = {
-          buttonType: 'primary', buttonText: '点击按钮', widthMode: 'auto', width: 0, align: 'center', disabledAfterTrigger: false, actionType: 'OPEN_URL', actionValue: ''
-        };
-        break;
-      default:
-        console.warn('Unknown component type:', type);
-        return null as any; // 返回 null 或抛出错误
-    }
-
-    return {
-      id: newId,
-      type: type,
-      name: name,
-      props: defaultProps,
-      children: children,
-    };
+    updateRecursive(this.rootNode.children);
   }
 
   /**
-   * 第一次拖拽组件到空白画布时，创建 RootComponent
+   * 拖放事件处理
+   * @param event CdkDragDrop 事件对象
    */
-  private initializeCanvasWithRootComponent(): void {
-    if (!this.rootNode) {
-      console.log('First component dragged onto canvas. Creating RootComponent.');
-      const newRootId = this.generateId();
-      this.rootNode = {
-        id: newRootId,
-        type: COMPONENT_TYPE.ROOT,
-        name: 'Root',
-        props: {
-          backgroundColor: '#ffffff',
-          padding: '8px',
-          rowGap: '8px',
-        } as RootProps,
-        children: []
-      };
-      this.selectedComponent = this.rootNode;
+  onDrop(event: CdkDragDrop<ComponentNodeModel[]>): void {
+    console.log('Drop event triggered:', event);
+    console.log('Previous container:', event.previousContainer.id);
+    console.log('Current container:', event.container.id);
+    console.log('Dragged data:', event.item.data);
+    console.log(this.allCanvasDropListIds)
+
+    const draggedData = event.item.data;
+    const draggedType = typeof draggedData === 'string' ? draggedData : draggedData.type; // 区分是新组件类型还是已存在的组件节点
+
+    // 1. 获取初始节点信息，获取结束节点信息
+    // currentContainerId 是当前鼠标所在的 drop list 的 ID
+    const currentContainerId = event.container.id;
+    // previousContainerId 是被拖动元素原始所在的 drop list 的 ID
+    const previousContainerId = event.previousContainer.id;
+
+    // 2. 若结束节点为画布，且画布上没有Root组件，创建初始化Root组件并添加到画布上作为最底层容器。
+    if (!this.rootNode && currentContainerId === 'canvas-root-drop-list' && typeof draggedData === 'string') {
+      this.rootNode = this.createRootComponent();
+      this.allCanvasDropListIds.push(this.rootNode.id);
+      console.log('Root component created and added to canvas.');
     }
-  }
 
-/**
-   * 处理拖放事件，无论是从左侧列表拖拽到画布，还是画布内部拖拽。
-   * @param event 拖放事件
-   */
-  onDrop(event: CdkDragDrop<any[]>) {
-    // 检查是否是来自左侧组件列表的拖拽
-    if (this.leftSidebarListIds.includes(event.previousContainer.id)) {
-      const componentType = event.item.data as COMPONENT_TYPE;
-      console.log(`Adding new component ${componentType} to canvas at index ${event.currentIndex}`);
+    // 找到目标容器节点
+    let currentContainerNode: ComponentNodeModel | null = null;
+    if (currentContainerId === 'canvas-root-drop-list') {
+      currentContainerNode = this.rootNode;
+    } else {
+      currentContainerNode = this.findComponentNodeById(this.rootNode, currentContainerId);
+    }
 
-      // 确保画布有根组件，如果第一次拖拽，则创建根组件
-      this.initializeCanvasWithRootComponent();
 
-      // 获取目标容器的 ID
-      const targetContainerId = event.container.id;
-      let targetParentNode: ComponentNodeModel | null = null;
+    // 阻止 Root 组件被拖动 (规则 1)
+    if (typeof draggedData !== 'string' && draggedData.type === COMPONENT_TYPE.ROOT) {
+      console.warn('Root component cannot be dragged.');
+      return;
+    }
+    // 阻止 Title 组件被拖动 (规则 8)
+    if (typeof draggedData !== 'string' && draggedData.type === COMPONENT_TYPE.TITLE) {
+      console.warn('Title component cannot be dragged; it is fixed at the top.');
+      return;
+    }
 
-      // 如果目标容器是画布的根 DropList (ID为 'canvas-root-drop-list')，则目标父节点是 rootNode
-      if (targetContainerId === 'canvas-root-drop-list') {
-        targetParentNode = this.rootNode;
-      } else {
-        // 否则，尝试在组件树中查找对应的组件作为目标父节点
-        const foundTarget = this.getComponentById(targetContainerId); // 使用 getComponentById 查找节点
-        if (foundTarget) {
-          targetParentNode = foundTarget;
-          // 进一步检查 targetParentNode 是否是一个允许放置子组件的类型
-          if (!this.isDroppableContainer(targetParentNode.type)) {
-            console.warn('Cannot drop component into this type of container:', targetParentNode.type);
-            return;
-          }
+    // 3. 判断初始节点来源
+    if (event.previousContainer.id === 'container-component-list' || event.previousContainer.id === 'primitive-component-list') {
+      // 来源于左侧组件栏拖拽
+      console.log('Drag originated from component list.');
+
+      // 4. 若组件类型为Title, 查询画布中是否已存在Title组件，若有则不得再拖入
+      if (draggedType === COMPONENT_TYPE.TITLE) {
+        if (this.findComponentByType(this.rootNode, COMPONENT_TYPE.TITLE)) {
+          alert('画布中已存在标题组件，一个画布只能有一个标题组件。');
+          return;
         }
       }
 
-      if (targetParentNode) {
-        this.onAddComponent({
-          parent: targetParentNode,
-          componentType: componentType,
-          index: event.currentIndex
-        });
-      } else {
-        console.warn('Could not determine a valid target parent node for the dropped component.');
+      // 创建新组件节点
+      const newComponentNode = this.createComponentNode(draggedType as COMPONENT_TYPE);
+      if (!newComponentNode) {
+        console.error('Failed to create new component node.');
+        return;
       }
 
+      // 放置规则判断
+      let fromType = newComponentNode.type as COMPONENT_TYPE;
+      let toType = currentContainerNode.type as COMPONENT_TYPE;
+      if (!this.canDropNewComponent(fromType, toType)) {
+        console.warn(`Cannot drop ${newComponentNode.type} into ${currentContainerNode.type}.`);
+        return;
+      }
+
+      // 4. 若结束节点为Root组件，创建初始节点对应类型的组件，添加至Root组件children末尾
+      if (currentContainerNode.type === COMPONENT_TYPE.ROOT) {
+        if (newComponentNode.type === COMPONENT_TYPE.TITLE) {
+          // 标题组件固定放在 Root 的 children 的最前方
+          this.rootNode!.children = [newComponentNode, ...(this.rootNode!.children || [])];
+        } else {
+          // 其他组件添加到 Root 的 children 末尾
+          this.rootNode!.children = [...(this.rootNode!.children || []), newComponentNode];
+        }
+      }
+      // 5. 若结束节点为Slot组件，判断初始节点对应类型的组件，添加至Slot组件children末尾
+      else if (currentContainerNode.type === COMPONENT_TYPE.SLOT) {
+        currentContainerNode.children = [...(currentContainerNode.children || []), newComponentNode];
+      }
+      // 如果目标是布局组件本身 (SINGLE_COLUMN, MULTI_COLUMN, HORIZONTAL, LIST)，则不允许直接放置内容组件
+      else if (this.isLayoutComponent(currentContainerNode.type)) {
+        console.warn(`Attempted to drop a new component into a layout component directly. This should be handled by dropping into its SLOT children.`);
+        return;
+      }
+
+
+      this.selectedComponent = newComponentNode;
+      this.updateAllCanvasDropListIds(this.rootNode); // 更新所有可拖拽区域的ID
+      this.rootNode = { ...this.rootNode! }; // 触发变更检测
     } else {
-      // 这是画布内部的拖拽 (从一个容器到另一个容器，或在同一个容器内排序)
-      console.log('Internal canvas drop event:', event);
+      // 6. 初始节点来源为画布中 (表明组件要在画布上拖拽排序)
+      console.log('Drag originated from canvas.');
 
-      // 获取源和目标容器对应的组件节点
-      const previousContainerNode = this.getComponentById(event.previousContainer.id);
-      const currentContainerNode = this.getComponentById(event.container.id);
+      // 获取被拖动节点和其父节点
+      const draggedNode = event.item.data as ComponentNodeModel;
+      if (!draggedNode) {
+        console.error('Dragged node not found for internal drop.');
+        return;
+      }
 
+      const previousContainerNode = this.findComponentNodeById(this.rootNode, previousContainerId);
       if (!previousContainerNode || !previousContainerNode.children) {
         console.warn('Previous container node not found or has no children for internal drop.');
         return;
       }
 
-      if (!currentContainerNode || !currentContainerNode.children) {
-        console.warn('Current container node not found or has no children for internal drop.');
+      // 放置规则判断
+      if (!this.canDropExistingComponent(draggedNode, currentContainerNode)) {
+        console.warn(`Cannot move ${draggedNode.type} into ${currentContainerNode.type}.`);
         return;
       }
 
-      // 检查目标容器是否允许接收组件
-      if (!this.isDroppableContainer(currentContainerNode.type)) {
-        console.warn('Target container does not allow dropping components:', currentContainerNode.type);
-        return;
+      // 9. 若初始节点类型为Slot,只能在当前Slot组件的父级布局组件中排序，不可拖动至外侧
+      if (draggedNode.type === COMPONENT_TYPE.SLOT) {
+        // 验证拖动范围，SLOT 只能在布局组件内移动
+        if (!this.isLayoutComponent(previousContainerNode.type) || !this.isLayoutComponent(currentContainerNode.type)) {
+          console.warn('SLOT components can only be moved within layout components.');
+          return;
+        }
+        if (event.previousContainer === event.container) {
+          // 在同一个容器内排序
+          moveItemInArray(previousContainerNode.children, event.previousIndex, event.currentIndex);
+          console.log(`Reordered SLOT components in container ${previousContainerNode.id}.`);
+        } else {
+          // 从一个布局组件移动到另一个布局组件 (SLOT 只能作为布局组件的直接子级)
+          transferArrayItem(
+            previousContainerNode.children,
+            currentContainerNode.children!, // currentContainerNode must have children for SLOT
+            event.previousIndex,
+            event.currentIndex
+          );
+          console.log(`Transferred SLOT component from ${previousContainerNode.id} to ${currentContainerNode.id}.`);
+        }
       }
+      // 10. 若初始节点类型为其他内容组件，可以在 SLOT 内部移动（排序），也可以从一个 SLOT 移动到另一个 SLOT，也可以从一个Slot拖动到Root组件下面
+      else if (this.isContentComponent(draggedNode.type)) {
+        // 检查源和目标容器是否符合规则 (SLOT 或 ROOT)
+        const isPreviousSlotOrRoot = previousContainerNode.type === COMPONENT_TYPE.SLOT || previousContainerNode.type === COMPONENT_TYPE.ROOT;
+        const isCurrentSlotOrRoot = currentContainerNode.type === COMPONENT_TYPE.SLOT || currentContainerNode.type === COMPONENT_TYPE.ROOT;
 
-      if (event.previousContainer === event.container) {
-        // 在同一个容器内排序
-        moveItemInArray(previousContainerNode.children, event.previousIndex, event.currentIndex);
-        console.log(`Reordered components in container ${previousContainerNode.id}.`);
-      } else {
-        // 从一个容器移动到另一个容器
-        transferArrayItem(
-          previousContainerNode.children,
-          currentContainerNode.children,
-          event.previousIndex,
-          event.currentIndex
-        );
-        console.log(`Transferred component from ${previousContainerNode.id} to ${currentContainerNode.id}.`);
+        if (!isPreviousSlotOrRoot || !isCurrentSlotOrRoot) {
+          console.warn(`Content components can only be moved between SLOTs or to/from ROOT.`);
+          return;
+        }
+
+        if (event.previousContainer === event.container) {
+          // 在同一个容器内排序 (SLOT 或 ROOT)
+          moveItemInArray(previousContainerNode.children, event.previousIndex, event.currentIndex);
+          console.log(`Reordered content components in container ${previousContainerNode.id}.`);
+        } else {
+          // 从一个容器移动到另一个容器 (SLOT <-> SLOT, SLOT -> ROOT, ROOT -> SLOT)
+          transferArrayItem(
+            previousContainerNode.children,
+            currentContainerNode.children!,
+            event.previousIndex,
+            event.currentIndex
+          );
+          console.log(`Transferred content component from ${previousContainerNode.id} to ${currentContainerNode.id}.`);
+        }
       }
 
       this.rootNode = { ...this.rootNode! }; // 触发变更检测
+      this.updateAllCanvasDropListIds(this.rootNode); // 更新所有可拖拽区域的ID
     }
   }
+
+  onCanvasDrop(event: CdkDragDrop<ComponentNodeModel[]>): void { 
+    console.log('Drop event triggered:', event);
+    console.log('Previous container:', event.previousContainer.id);
+    console.log('Current container:', event.container.id);
+    console.log('Dragged data:', event.item.data);
+    console.log(this.allCanvasDropListIds)
+  }
+
+  // 辅助方法：根据ID查找组件节点
+  private findComponentNodeById(node: ComponentNodeModel | null, id: string): ComponentNodeModel | null {
+    if (!node) return null;
+    if (node.id === id) return node;
+    if (node.children) {
+      for (const child of node.children) {
+        const found = this.findComponentNodeById(child, id);
+        if (found) return found;
+      }
+    }
+    return null;
+  }
+
+  // 辅助方法：根据类型查找组件节点
+  private findComponentByType(node: ComponentNodeModel | null, type: COMPONENT_TYPE): ComponentNodeModel | null {
+    if (!node) return null;
+    if (node.type === type) return node;
+    if (node.children) {
+      for (const child of node.children) {
+        const found = this.findComponentByType(child, type);
+        if (found) return found;
+      }
+    }
+    return null;
+  }
+
+  // 辅助方法：创建新的组件节点
+  createComponentNode(type: COMPONENT_TYPE): ComponentNodeModel | null {
+    const commonProps = {
+      id: uuid.v4(),
+      type: type,
+      props: {},
+      children: []
+    };
+
+    switch (type) {
+      case COMPONENT_TYPE.ROOT:
+        return { ...commonProps, props: { backgroundColor: '#f0f2f5', padding: '10px', rowGap: '10px' } as RootProps };
+      case COMPONENT_TYPE.SINGLE_COLUMN:
+        // SingleColumn 默认包含一个 SLOT
+        const singleColumnSlot: ComponentNodeModel = {
+          id: uuid.v4(),
+          type: COMPONENT_TYPE.SLOT,
+          name: '插槽',
+          props: { padding: '4px', rowGap: '4px', alignItems: 'flex-start', justifyContent: 'flex-start' } as SlotProps,
+          children: []
+        };
+        return {
+          ...commonProps,
+          name: '单列',
+          props: { backgroundMode: 'transparent', backgroundColor: 'transparent', rowGap: '8px', padding: '8px', borderRadius: '0px' } as SingleColumnProps,
+          children: [singleColumnSlot]
+        };
+      case COMPONENT_TYPE.MULTI_COLUMN:
+        // MultiColumn 默认包含三个 SLOT
+        const multiColumnSlots: ComponentNodeModel[] = Array.from({ length: 3 }).map(() => ({
+          id: uuid.v4(),
+          type: COMPONENT_TYPE.SLOT,
+          name: '插槽',
+          props: { padding: '4px', rowGap: '4px', alignItems: 'flex-start', justifyContent: 'flex-start' } as SlotProps,
+          children: []
+        }));
+        return {
+          ...commonProps,
+          name: '多列',
+          props: { slotCount: 3, backgroundMode: 'transparent', backgroundColor: 'transparent', rowGap: '8px', padding: '8px', borderRadius: '0px' } as MultiColumnProps,
+          children: multiColumnSlots
+        };
+      case COMPONENT_TYPE.HORIZONTAL:
+        // Horizontal 默认包含三个 SLOT
+        const horizontalSlots: ComponentNodeModel[] = Array.from({ length: 3 }).map(() => ({
+          id: uuid.v4(),
+          type: COMPONENT_TYPE.SLOT,
+          name: '插槽',
+          props: { padding: '4px', rowGap: '4px', alignItems: 'flex-start', justifyContent: 'flex-start' } as SlotProps,
+          children: []
+        }));
+        return {
+          ...commonProps,
+          name: '横滑',
+          props: { slotCount: 3, backgroundMode: 'transparent', backgroundColor: 'transparent', rowGap: '8px', padding: '8px', borderRadius: '0px' } as HorizontalProps,
+          children: horizontalSlots
+        };
+      case COMPONENT_TYPE.LIST:
+        // List 默认包含三个 SINGLE_COLUMN，每个 SINGLE_COLUMN 内部有一个 SLOT
+        const listSingleColumns: ComponentNodeModel[] = Array.from({ length: 3 }).map(() => ({
+          id: uuid.v4(),
+          type: COMPONENT_TYPE.SLOT,
+          name: '插槽',
+          props: { padding: '4px', rowGap: '4px', alignItems: 'flex-start', justifyContent: 'flex-start' } as SlotProps,
+          children: [{
+            id: uuid.v4(),
+            type: COMPONENT_TYPE.SINGLE_COLUMN,
+            name: '单列',
+            props: { backgroundMode: 'transparent', backgroundColor: 'transparent', rowGap: '8px', padding: '8px', borderRadius: '0px' } as SingleColumnProps,
+            children: []
+          }]
+        }));
+        return {
+          ...commonProps,
+          name: '列表',
+          props: { columnCount: 3, backgroundMode: 'transparent', backgroundColor: 'transparent', rowGap: '8px', padding: '8px', borderRadius: '0px' } as ListProps,
+          children: listSingleColumns
+        };
+      case COMPONENT_TYPE.SLOT:
+        return { ...commonProps, name: '插槽', props: { padding: '4px', rowGap: '4px', alignItems: 'flex-start', justifyContent: 'flex-start' } as SlotProps };
+      case COMPONENT_TYPE.TITLE:
+        return { ...commonProps, name: '标题', props: { text: '默认标题内容', fontColor: '#333', fontSize: ContentFontSize.REGULAR, fontWeight: 'bold', align: AlignType.CENTER } as TitleProps };
+      case COMPONENT_TYPE.CONTENT:
+        return { ...commonProps, name: '内容', props: { text: '默认内容信息', fontColor: '#666', fontSize: ContentFontSize.REGULAR, fontWeight: 'normal', align: AlignType.LEFT, maxLines: 0 } as ContentProps };
+      case COMPONENT_TYPE.DIVIDER:
+        return { ...commonProps, name: '分割线', props: { color: '#e0e0e0', paddingTop: '4px', paddingBottom: '4px', lineType: DividerLineType.SOLID } as DividerProps };
+      case COMPONENT_TYPE.IMAGE:
+        return { ...commonProps, name: '图片', props: { src: '', widthMode: ImageWidthMode.FIXED, fixedWidthSize: ImageFixedWidthSize.CUSTOM, customWidth: 40, customHeight: 40, borderRadius: '0px', align: AlignType.CENTER } as ImageProps };
+      case COMPONENT_TYPE.BUTTON:
+        return { ...commonProps, name: '按钮', props: { buttonText: '点击按钮', buttonType: ButtonType.PRIMARY, widthMode: ButtonWidthMode.AUTO, width: 0, align: AlignType.CENTER, link: '' } as ButtonProps };
+      default:
+        console.warn(`Unknown component type: ${type}`);
+        return null;
+    }
+  }
+
 
   // 辅助方法：判断组件类型是否是一个可以接收子组件的容器
   isDroppableContainer(type: string): boolean {
     return [
-        "ROOT",
-        "SINGLE_COLUMN",
-        "MULTI_COLUMN",
-        "HORIZONTAL",
-        "LIST",
-        "SLOT"
-    ].includes(type);
+      COMPONENT_TYPE.ROOT,
+      COMPONENT_TYPE.SLOT
+    ].includes(type as COMPONENT_TYPE);
   }
 
-  // --- 属性面板相关 ---
-  get jsonOutput(): string {
-    return JSON.stringify(this.rootNode, null, 2);
+  // 辅助方法：判断是否为布局组件
+  isLayoutComponent(type: string): boolean {
+    return [
+      COMPONENT_TYPE.SINGLE_COLUMN,
+      COMPONENT_TYPE.MULTI_COLUMN,
+      COMPONENT_TYPE.HORIZONTAL,
+      COMPONENT_TYPE.LIST
+    ].includes(type as COMPONENT_TYPE);
   }
 
-  // 生成唯一 ID
-  generateId(): string {
-    return uuid.v4();
+  // 辅助方法：判断是否为内容组件 (包括布局组件和基本组件，但不包括 ROOT 和 SLOT)
+  isContentComponent(type: string): boolean {
+    return ![COMPONENT_TYPE.ROOT, COMPONENT_TYPE.SLOT].includes(type as COMPONENT_TYPE);
   }
 
-  saveTemplate(): void {
-    console.log('保存模板');
+
+  // 递归更新所有可拖拽区域的ID
+  private updateAllCanvasDropListIds(node: ComponentNodeModel | null): void {
+    const ids: string[] = [];
+    const collectIds = (currentNode: ComponentNodeModel | null) => {
+      if (currentNode) {
+        if (this.isDroppableContainer(currentNode.type)) {
+          ids.push(currentNode.id);
+        }
+        if (currentNode.children) {
+          currentNode.children.forEach(child => collectIds(child));
+        }
+      }
+    };
+    collectIds(node);
+    this.allCanvasDropListIds = Array.from(new Set(ids)); // 去重并更新
+    console.log('Updated allCanvasDropListIds:', this.allCanvasDropListIds);
   }
 
+
+  // 判断是否允许拖放新组件到目标容器
+  private canDropNewComponent(draggedType: COMPONENT_TYPE, targetType: COMPONENT_TYPE): boolean {
+    // 规则 1: Root 组件不可拖动，不可删除。(已经在 onDrop 开头处理了)
+
+    // 规则 2: SLOT 组件的放置限制
+    if (draggedType === COMPONENT_TYPE.SLOT) {
+      // 只能作为布局组件的子级
+      if (!this.isLayoutComponent(targetType)) {
+        console.warn(`Rule Violation: SLOT component can only be a child of a layout component (e.g., SingleColumn, MultiColumn, Horizontal, List).`);
+        return false;
+      }
+      // 不能被拖出布局组件直接放到 Root 组件下
+      // (This is implicitly handled because if it's a new component from the sidebar,
+      // it won't be a SLOT, and if it's an existing SLOT being dragged,
+      // its 'previousContainerId' will be a layout component).
+      return true;
+    }
+
+    // 规则 3: 内容组件 (布局或基本) 的放置规则
+    if (this.isContentComponent(draggedType)) {
+      // 可以直接成为 Root 组件的子级
+      if (targetType === COMPONENT_TYPE.ROOT) {
+        return true;
+      }
+      // 必须放置在 SLOT 内部
+      if (targetType === COMPONENT_TYPE.SLOT) {
+        return true;
+      }
+      // 不能直接成为布局组件（SINGLE_COLUMN, MULTI_COLUMN, HORIZONTAL, LIST）的直接子级
+      if (this.isLayoutComponent(targetType)) {
+        console.warn(`Rule Violation: Content components cannot be a direct child of layout components (${targetType}). They must be placed inside a SLOT.`);
+        return false;
+      }
+      // 不能与 SLOT 同级 (由上述规则隐式处理，因为SLOT只存在于布局组件下，内容组件要么在ROOT要么在SLOT)
+    }
+
+    // Default: 如果没有特定规则，则不允许拖放
+    return false;
+  }
+
+  // 判断是否允许拖放画布中已存在的组件到目标容器
+  private canDropExistingComponent(draggedNode: ComponentNodeModel, targetNode: ComponentNodeModel): boolean {
+    const draggedType = draggedNode.type;
+    const targetType = targetNode.type;
+
+    // Root 组件不可拖动 (规则 1) - 已经在 onDrop 开头处理了
+    if (draggedType === COMPONENT_TYPE.ROOT) {
+      console.warn('Root component cannot be dragged.');
+      return false;
+    }
+    // Title 组件不可拖动 (规则 8) - 已经在 onDrop 开头处理了
+    if (draggedType === COMPONENT_TYPE.TITLE) {
+      console.warn('Title component cannot be dragged; it is fixed at the top.');
+      return false;
+    }
+
+    // SLOT 组件的拖动限制 (规则 9)
+    if (draggedType === COMPONENT_TYPE.SLOT) {
+      // 只能在当前Slot组件的父级布局组件中排序，不可拖动至外侧
+      // (这个检查是在 onDrop 中通过判断 previousContainerNode.type 和 currentContainerNode.type 来实现的)
+      // 在这里，我们只需要确保目标是一个布局组件
+      if (!this.isLayoutComponent(targetType)) {
+        console.warn(`Rule Violation: SLOT components can only be moved within layout components.`);
+        return false;
+      }
+      // SLOT 不能作为 Root 的直接子级 (这个已经由 createComponentNode 确保 SLOT 总是作为布局组件的子级，
+      // 且 isLayoutComponent 已经过滤掉 Root)
+      if (targetType === COMPONENT_TYPE.ROOT) {
+        console.warn(`Rule Violation: SLOT component cannot be a direct child of Root component.`);
+        return false;
+      }
+      // 不能存放Slot组件和Root组件 (这个由 SlotComponent 自身的 drop 逻辑处理)
+      return true;
+    }
+
+    // 内容组件（Layout Components 和 Primitive Components）的拖动限制 (规则 10)
+    if (this.isContentComponent(draggedType)) {
+      // 可以在 SLOT 内部移动（排序）
+      if (targetType === COMPONENT_TYPE.SLOT) {
+        return true;
+      }
+      // 也可以从一个 SLOT 移动到另一个 SLOT (handled by CdkDragDrop if target is SLOT)
+      // 也可以从一个Slot拖动到Root组件下面
+      if (targetType === COMPONENT_TYPE.ROOT) {
+        return true;
+      }
+      // 不能直接成为布局组件（SINGLE_COLUMN, MULTI_COLUMN, HORIZONTAL, LIST）的直接子级
+      if (this.isLayoutComponent(targetType)) {
+        console.warn(`Rule Violation: Content components cannot be a direct child of layout components (${targetType}). They must be placed inside a SLOT.`);
+        return false;
+      }
+      // 不能与 SLOT 同级 (由上述规则隐式处理)
+      return true;
+    }
+
+    return false; // 默认不允许
+  }
 }
-
-

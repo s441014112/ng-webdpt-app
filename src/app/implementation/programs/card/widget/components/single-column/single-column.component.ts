@@ -78,4 +78,8 @@ export class SingleColumnComponent implements OnInit {
     this.dropEvent.emit(event);
   }
 
+  enterPredicate(): boolean {
+    return false
+  }
+
 }

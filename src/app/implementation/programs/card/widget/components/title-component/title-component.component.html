@@ -10,6 +10,7 @@
   cdkDrag
   [id]="node!.id"
   [cdkDragData]="node"
+  (cdkDropListDropped)="onTitleDrop($event)"
 >
   <div class="title-content">
     {{ titleProps.text || '默认标题内容' }}

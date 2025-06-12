@@ -1,18 +1,19 @@
 <div class="content-component"
-     [ngClass]="{ 'selected': isSelected(node) }"
-     (click)="onComponentClick($event, node)"
-     cdkDrag
-     [id]="node!.id"
-     [cdkDragData]="node"
+  [ngClass]="{ 'selected': isSelected(node) }"
+  (click)="onComponentClick($event, node)"
+  cdkDrag
+  [id]="node!.id"
+  [cdkDragData]="node"
+  (cdkDropListDropped)="onContentDrop($event)"
 >
 
   <div class="content-text" [ngStyle]="{
-         'color': contentProps.fontColor,
-         'font-weight': contentProps.fontWeight,
-         'font-size': contentProps.fontSize,
-         'text-align': contentProps.align,
-         '-webkit-line-clamp': contentProps.maxLines
-       }">
+      'color': contentProps.fontColor,
+      'font-weight': contentProps.fontWeight,
+      'font-size': contentProps.fontSize,
+      'text-align': contentProps.align,
+      '-webkit-line-clamp': contentProps.maxLines
+    }">
     {{ displayText }}
   </div>
 </div>

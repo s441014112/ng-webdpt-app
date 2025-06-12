@@ -1,17 +1,16 @@
 <div class="image-component-wrapper"
-     [ngClass]="{ 'selected': isSelected(node) }"
-     (click)="onComponentClick($event, node)"
-     cdkDrag
-     [id]="node!.id"
-     [cdkDragData]="node"
+  [ngClass]="{ 'selected': isSelected(node) }"
+  (click)="onComponentClick($event, node)"
+  cdkDrag
+  [id]="node!.id"
+  [cdkDragData]="node"
+  (cdkDropListDropped)="onImageDrop($event)"
 >
   <div class="image-container">
     <img
-      [src]="imageProps?.src"
-      [width]="calculatedWidth"
-      [height]="calculatedHeight"
-      (close)="' '"
-      nzFallback="assets/template/IMAGE.png"
+      [src]="imageProps?.src || 'assets/template/IMAGE.png'"
+      [width]="40"
+      [height]="40"
     />
   </div>
 </div>

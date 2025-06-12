@@ -4,14 +4,15 @@
   cdkDrag
   [id]="node!.id"
   [cdkDragData]="node"
+  (cdkDropListDropped)="onDividerDrop($event)"
 >
 
   <div class="divider-line"
-       [ngStyle]="{
-         'border-top-style': dividerProps.lineType,
-         'border-top-color': dividerProps.color,
-         'padding-top': dividerProps.paddingTop,
-         'padding-bottom': dividerProps.paddingBottom
-       }">
+    [ngStyle]="{
+      'border-top-style': dividerProps.lineType,
+      'border-top-color': dividerProps.color,
+      'padding-top': dividerProps.paddingTop,
+      'padding-bottom': dividerProps.paddingBottom
+    }">
   </div>
 </div>

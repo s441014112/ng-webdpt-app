@@ -1,4 +1,4 @@
-<nz-layout style="height: 100vh;">
+<nz-layout style="height: 95vh;">
   <nz-header class="template-header">
     <span class="template-name">{{ templateName }}</span>
     <button nz-button nzType="primary" (click)="saveTemplate()">保存</button>
@@ -25,8 +25,10 @@
               cdkDrag 
               [cdkDragData]="comp.type" 
               class="component-item"
+              (click)="addComponentToCanvas(comp.type)"
             >
               <img class="component-icon" src="assets/template/{{ comp.type }}.png" alt="{{ comp.name }}" />
+              <img class="component-icon" *cdkDragPreview src="assets/template/{{ comp.type }}.png" alt="{{ comp.name }}" />
               <span>{{ comp.name }}</span>
             </div>
           </div>
@@ -39,8 +41,14 @@
             cdkDropListConnectedTo="canvas-root-drop-list"
             [cdkDropListData]="primitiveComponents"
           >
-            <div *ngFor="let comp of primitiveComponents" cdkDrag [cdkDragData]="comp.type" class="component-item">
+            <div 
+              *ngFor="let comp of primitiveComponents"
+              cdkDrag [cdkDragData]="comp.type"
+              class="component-item"
+              (click)="addComponentToCanvas(comp.type)"
+            >
               <img class="component-icon" src="assets/template/{{ comp.type }}.png" alt="{{ comp.name }}" />
+              <img class="component-icon" *cdkDragPreview src="assets/template/{{ comp.type }}.png" alt="{{ comp.name }}" />
               <span>{{ comp.name }}</span>
             </div>
           </div>
@@ -53,19 +61,19 @@
       <div class="canvas-wrapper"
         id="canvas-root-drop-list"
         cdkDropList
-        [cdkDropListData]="getCanvasDropListData()" 
-        [cdkDropListConnectedTo]="leftSidebarListIds"
+        [cdkDropListData]="rootNode?.children"
+        [cdkDropListConnectedTo]="allCanvasDropListIds"
         (cdkDropListDropped)="onDrop($event)"
       >
   
         <ng-container *ngIf="rootNode">
           <app-root-component
-            [node]="rootNode!" [selectedComponentId]="selectedComponent?.id"
+            [node]="rootNode!"
+            [selectedComponentId]="selectedComponent?.id"
             (selectComponent)="onSelectComponent($event)"
             (addComponent)="onAddComponent($event)"
-            (deleteComponent)="onDeleteComponent($event)"
-            (updateComponentProps)="onUpdateComponentProps($event)"
-            (copyComponent)="onCopyComponent($event)"
+            (dropEvent)="onDrop($event)"
+            [allCanvasDropListIds]="allCanvasDropListIds"
           ></app-root-component>
         </ng-container>
   
@@ -85,9 +93,6 @@
         <i class="trigger" nz-icon [nzType]="showRightPanel ? 'menu-unfold' : 'menu-fold'"
           (click)="showRightPanel = !showRightPanel"></i>
       </div>
-      <ng-container *ngIf="selectedComponent && !showRightPanel">
-        <app-property-editor [item]="selectedComponent"></app-property-editor>
-      </ng-container>
       <ng-container *ngIf="!selectedComponent">
         <p>选择元素查看相关配置</p>
       </ng-container>

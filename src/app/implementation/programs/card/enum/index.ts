@@ -37,7 +37,8 @@ export enum ImageWidthMode {
 export enum ImageFixedWidthSize {
   SMALL = 'small',  // 小尺寸
   NORMAL = 'normal', // 中尺寸 (常规)
-  LARGE = 'large'   // 大尺寸
+  LARGE = 'large',   // 大尺寸
+  CUSTOM = 'custom',
 }
 
 // 按钮类型
