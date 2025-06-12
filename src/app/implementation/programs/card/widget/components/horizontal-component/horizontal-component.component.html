@@ -10,6 +10,9 @@
      cdkDrag
      [id]="node!.id"
      [cdkDragData]="node"
+     cdkDropList
+     [cdkDropListData]="node!.children"
+     [cdkDropListConnectedTo]="allCanvasDropListIds"
      (dropEvent)="onHorizontalDrop($event)"
 >
   <ng-container *ngIf="slotChildren.length > 0;">
