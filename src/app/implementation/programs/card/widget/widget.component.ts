@@ -50,7 +50,7 @@ export class WidgetComponent implements OnInit {
   showRightPanel = false;
 
   // 用于在画布中的所有可拖拽区域之间建立连接
-  allCanvasDropListIds: string[] = ['canvas-root-drop-list'];
+  allCanvasDropListIds: string[] = ['canvas-root-drop-list',"container-component-list", "primitive-component-list"];
 
 
   constructor(private route: ActivatedRoute) { }
@@ -100,7 +100,7 @@ export class WidgetComponent implements OnInit {
     // 如果画布中没有 Root 组件，先创建一个
     if (!this.rootNode) {
       this.rootNode = this.createRootComponent();
-      this.allCanvasDropListIds.push(this.rootNode.id);
+      this.updateAllCanvasDropListIds(this.rootNode);
     }
 
     if (componentType === COMPONENT_TYPE.TITLE) {
@@ -225,23 +225,73 @@ export class WidgetComponent implements OnInit {
     console.log('Previous container:', event.previousContainer.id);
     console.log('Current container:', event.container.id);
     console.log('Dragged data:', event.item.data);
-    console.log(this.allCanvasDropListIds)
+    console.log(this.allCanvasDropListIds);
+    console.log('rootNode:', !!this.rootNode);
+
+    // 若结束节点为画布，且画布上没有Root组件，创建初始化Root组件并添加到画布上作为最底层容器。
+    if (!this.rootNode) {
+      this.rootNode = this.createRootComponent();
+      this.updateAllCanvasDropListIds(this.rootNode);
+      console.log('Root component created and added to canvas.');
+    }
+
+    // 获取鼠标释放时的坐标 { x, y }
+    const dropPoint = event.dropPoint; 
+    let actualTargetContainerId: string | null = null;
+    // 获取所有可能的画布内部拖放目标（通过 ID 获取 DOM 元素）
+    const potentialCanvasDropTargets: { id: string, element: HTMLElement }[] = [];
+    for (const id of this.allCanvasDropListIds) {
+      // 排除左侧面板的组件列表，它们不是画布上的放置目标
+      if (id === 'container-component-list' || id === 'primitive-component-list') {
+        continue;
+      }
+      const element = document.getElementById(id);
+      if (element) {
+        potentialCanvasDropTargets.push({ id, element });
+      }
+    }
+
+    // 遍历所有潜在目标，通过坐标判断最精确的目标
+    let bestMatchId: string | null = null;
+    let bestMatchArea: number = Infinity;
+    // 遍历所有可能的画布内部拖放目标
+    for (const target of potentialCanvasDropTargets) {
+        const rect = target.element.getBoundingClientRect();
+
+        // 检查鼠标坐标是否在当前元素的范围内
+        if (
+            dropPoint.x >= rect.left &&
+            dropPoint.x <= rect.right &&
+            dropPoint.y >= rect.top &&
+            dropPoint.y <= rect.bottom
+        ) {
+            // 如果鼠标在范围内，考虑这是潜在目标。
+            // 如果有多个重叠的区域，选择面积最小的那个（通常意味着更具体的嵌套目标）
+            const currentArea = rect.width * rect.height;
+            if (currentArea < bestMatchArea) {
+                bestMatchArea = currentArea;
+                bestMatchId = target.id;
+            }
+        }
+    }
+
+    let actualTargetContainerNode = null;
+    // 如果通过坐标找到了最佳匹配
+    if (bestMatchId) {
+      actualTargetContainerId = bestMatchId;
+    } else {
+      actualTargetContainerId = event.container.id;
+    }
+    
 
     const draggedData = event.item.data;
-    const draggedType = typeof draggedData === 'string' ? draggedData : draggedData.type; // 区分是新组件类型还是已存在的组件节点
+    const draggedType = typeof draggedData === 'string' ? draggedData : draggedData.type; 
 
     // 1. 获取初始节点信息，获取结束节点信息
     // currentContainerId 是当前鼠标所在的 drop list 的 ID
-    const currentContainerId = event.container.id;
+    const currentContainerId = actualTargetContainerId;
     // previousContainerId 是被拖动元素原始所在的 drop list 的 ID
     const previousContainerId = event.previousContainer.id;
-
-    // 2. 若结束节点为画布，且画布上没有Root组件，创建初始化Root组件并添加到画布上作为最底层容器。
-    if (!this.rootNode && currentContainerId === 'canvas-root-drop-list' && typeof draggedData === 'string') {
-      this.rootNode = this.createRootComponent();
-      this.allCanvasDropListIds.push(this.rootNode.id);
-      console.log('Root component created and added to canvas.');
-    }
 
     // 找到目标容器节点
     let currentContainerNode: ComponentNodeModel | null = null;
@@ -253,20 +303,17 @@ export class WidgetComponent implements OnInit {
 
 
     // 阻止 Root 组件被拖动 (规则 1)
-    if (typeof draggedData !== 'string' && draggedData.type === COMPONENT_TYPE.ROOT) {
-      console.warn('Root component cannot be dragged.');
+    if (draggedData.type === COMPONENT_TYPE.ROOT) {
+      console.warn('组件不可拖动');
       return;
     }
     // 阻止 Title 组件被拖动 (规则 8)
-    if (typeof draggedData !== 'string' && draggedData.type === COMPONENT_TYPE.TITLE) {
-      console.warn('Title component cannot be dragged; it is fixed at the top.');
+    if (draggedData.type === COMPONENT_TYPE.TITLE) {
       return;
     }
 
-    // 3. 判断初始节点来源
+    // 判断初始节点来源
     if (event.previousContainer.id === 'container-component-list' || event.previousContainer.id === 'primitive-component-list') {
-      // 来源于左侧组件栏拖拽
-      console.log('Drag originated from component list.');
 
       // 4. 若组件类型为Title, 查询画布中是否已存在Title组件，若有则不得再拖入
       if (draggedType === COMPONENT_TYPE.TITLE) {
@@ -307,28 +354,21 @@ export class WidgetComponent implements OnInit {
       }
       // 如果目标是布局组件本身 (SINGLE_COLUMN, MULTI_COLUMN, HORIZONTAL, LIST)，则不允许直接放置内容组件
       else if (this.isLayoutComponent(currentContainerNode.type)) {
-        console.warn(`Attempted to drop a new component into a layout component directly. This should be handled by dropping into its SLOT children.`);
         return;
       }
 
-
       this.selectedComponent = newComponentNode;
-      this.updateAllCanvasDropListIds(this.rootNode); // 更新所有可拖拽区域的ID
       this.rootNode = { ...this.rootNode! }; // 触发变更检测
+      this.updateAllCanvasDropListIds(this.rootNode); // 更新所有可拖拽区域的ID
     } else {
       // 6. 初始节点来源为画布中 (表明组件要在画布上拖拽排序)
       console.log('Drag originated from canvas.');
 
       // 获取被拖动节点和其父节点
       const draggedNode = event.item.data as ComponentNodeModel;
-      if (!draggedNode) {
-        console.error('Dragged node not found for internal drop.');
-        return;
-      }
-
       const previousContainerNode = this.findComponentNodeById(this.rootNode, previousContainerId);
-      if (!previousContainerNode || !previousContainerNode.children) {
-        console.warn('Previous container node not found or has no children for internal drop.');
+      if (!draggedNode || !previousContainerNode || !previousContainerNode.children) {
+        console.warn('出错了没找到节点');
         return;
       }
 
@@ -338,7 +378,7 @@ export class WidgetComponent implements OnInit {
         return;
       }
 
-      // 9. 若初始节点类型为Slot,只能在当前Slot组件的父级布局组件中排序，不可拖动至外侧
+      // 若初始节点类型为Slot,只能在当前Slot组件的父级布局组件中排序，不可拖动至外侧
       if (draggedNode.type === COMPONENT_TYPE.SLOT) {
         // 验证拖动范围，SLOT 只能在布局组件内移动
         if (!this.isLayoutComponent(previousContainerNode.type) || !this.isLayoutComponent(currentContainerNode.type)) {
@@ -348,19 +388,10 @@ export class WidgetComponent implements OnInit {
         if (event.previousContainer === event.container) {
           // 在同一个容器内排序
           moveItemInArray(previousContainerNode.children, event.previousIndex, event.currentIndex);
-          console.log(`Reordered SLOT components in container ${previousContainerNode.id}.`);
-        } else {
-          // 从一个布局组件移动到另一个布局组件 (SLOT 只能作为布局组件的直接子级)
-          transferArrayItem(
-            previousContainerNode.children,
-            currentContainerNode.children!, // currentContainerNode must have children for SLOT
-            event.previousIndex,
-            event.currentIndex
-          );
-          console.log(`Transferred SLOT component from ${previousContainerNode.id} to ${currentContainerNode.id}.`);
         }
+        return;
       }
-      // 10. 若初始节点类型为其他内容组件，可以在 SLOT 内部移动（排序），也可以从一个 SLOT 移动到另一个 SLOT，也可以从一个Slot拖动到Root组件下面
+      // 若初始节点类型为其他内容组件，可以在 SLOT 内部移动（排序），也可以从一个 SLOT 移动到另一个 SLOT，也可以从一个Slot拖动到Root组件下面
       else if (this.isContentComponent(draggedNode.type)) {
         // 检查源和目标容器是否符合规则 (SLOT 或 ROOT)
         const isPreviousSlotOrRoot = previousContainerNode.type === COMPONENT_TYPE.SLOT || previousContainerNode.type === COMPONENT_TYPE.ROOT;
@@ -390,14 +421,6 @@ export class WidgetComponent implements OnInit {
       this.rootNode = { ...this.rootNode! }; // 触发变更检测
       this.updateAllCanvasDropListIds(this.rootNode); // 更新所有可拖拽区域的ID
     }
-  }
-
-  onCanvasDrop(event: CdkDragDrop<ComponentNodeModel[]>): void { 
-    console.log('Drop event triggered:', event);
-    console.log('Previous container:', event.previousContainer.id);
-    console.log('Current container:', event.container.id);
-    console.log('Dragged data:', event.item.data);
-    console.log(this.allCanvasDropListIds)
   }
 
   // 辅助方法：根据ID查找组件节点
@@ -527,7 +550,11 @@ export class WidgetComponent implements OnInit {
   isDroppableContainer(type: string): boolean {
     return [
       COMPONENT_TYPE.ROOT,
-      COMPONENT_TYPE.SLOT
+      COMPONENT_TYPE.SLOT,
+      COMPONENT_TYPE.SINGLE_COLUMN,
+      COMPONENT_TYPE.MULTI_COLUMN,
+      COMPONENT_TYPE.HORIZONTAL,
+      COMPONENT_TYPE.LIST
     ].includes(type as COMPONENT_TYPE);
   }
 
@@ -549,7 +576,7 @@ export class WidgetComponent implements OnInit {
 
   // 递归更新所有可拖拽区域的ID
   private updateAllCanvasDropListIds(node: ComponentNodeModel | null): void {
-    const ids: string[] = [];
+    const ids: string[] = ['canvas-root-drop-list',"container-component-list", "primitive-component-list"];
     const collectIds = (currentNode: ComponentNodeModel | null) => {
       if (currentNode) {
         if (this.isDroppableContainer(currentNode.type)) {
@@ -578,20 +605,17 @@ export class WidgetComponent implements OnInit {
         return false;
       }
       // 不能被拖出布局组件直接放到 Root 组件下
-      // (This is implicitly handled because if it's a new component from the sidebar,
-      // it won't be a SLOT, and if it's an existing SLOT being dragged,
-      // its 'previousContainerId' will be a layout component).
       return true;
     }
 
-    // 规则 3: 内容组件 (布局或基本) 的放置规则
+    // 内容组件 (布局或基本) 的放置规则
     if (this.isContentComponent(draggedType)) {
       // 可以直接成为 Root 组件的子级
       if (targetType === COMPONENT_TYPE.ROOT) {
         return true;
       }
       // 必须放置在 SLOT 内部
-      if (targetType === COMPONENT_TYPE.SLOT) {
+      if (targetType === COMPONENT_TYPE.SLOT && draggedType !== COMPONENT_TYPE.TITLE) {
         return true;
       }
       // 不能直接成为布局组件（SINGLE_COLUMN, MULTI_COLUMN, HORIZONTAL, LIST）的直接子级
@@ -631,23 +655,19 @@ export class WidgetComponent implements OnInit {
         console.warn(`Rule Violation: SLOT components can only be moved within layout components.`);
         return false;
       }
-      // SLOT 不能作为 Root 的直接子级 (这个已经由 createComponentNode 确保 SLOT 总是作为布局组件的子级，
-      // 且 isLayoutComponent 已经过滤掉 Root)
+      // SLOT 不能作为 Root 的直接子级
       if (targetType === COMPONENT_TYPE.ROOT) {
-        console.warn(`Rule Violation: SLOT component cannot be a direct child of Root component.`);
         return false;
       }
-      // 不能存放Slot组件和Root组件 (这个由 SlotComponent 自身的 drop 逻辑处理)
       return true;
     }
 
     // 内容组件（Layout Components 和 Primitive Components）的拖动限制 (规则 10)
     if (this.isContentComponent(draggedType)) {
-      // 可以在 SLOT 内部移动（排序）
+      // 可以在 SLOT 内部移动（排序）,也可以从一个 SLOT 移动到另一个 SLOT
       if (targetType === COMPONENT_TYPE.SLOT) {
         return true;
       }
-      // 也可以从一个 SLOT 移动到另一个 SLOT (handled by CdkDragDrop if target is SLOT)
       // 也可以从一个Slot拖动到Root组件下面
       if (targetType === COMPONENT_TYPE.ROOT) {
         return true;
@@ -657,7 +677,6 @@ export class WidgetComponent implements OnInit {
         console.warn(`Rule Violation: Content components cannot be a direct child of layout components (${targetType}). They must be placed inside a SLOT.`);
         return false;
       }
-      // 不能与 SLOT 同级 (由上述规则隐式处理)
       return true;
     }
 
