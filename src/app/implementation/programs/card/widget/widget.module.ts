@@ -5,6 +5,7 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzCollapseModule } from 'ng-zorro-antd/collapse';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzImageModule } from 'ng-zorro-antd/image';
+import { NzDividerModule } from 'ng-zorro-antd/divider';
 
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { WidgetRoutingModule } from './widget-routing.module';
@@ -47,6 +48,7 @@ import { SlotComponentComponent } from './components/slot-component/slot-compone
     NzCollapseModule,
     NzButtonModule,
     NzImageModule,
+    NzDividerModule,
     DragDropModule,
     WidgetRoutingModule
   ],

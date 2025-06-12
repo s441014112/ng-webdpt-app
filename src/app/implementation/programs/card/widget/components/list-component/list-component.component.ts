@@ -34,14 +34,17 @@ export class ListComponentComponent implements OnInit {
     return this.node.props as ListProps;
   }
 
+  /**
+ * 过滤出所有类型为 SLOT 的子组件。
+ * 多列组件的子元素是插槽，插槽的子元素才是实际的组件。
+ */
+  get slotChildren(): ComponentNodeModel[] {
+    return this.node.children?.filter(child => child.type === COMPONENT_TYPE.SLOT) || [];
+  }
+
   onComponentClick(event: MouseEvent, component: ComponentNodeModel): void {
     event.stopPropagation();
     this.selectComponent.emit(component);
-  }
-
-  // 当内部的子组件（现在是 SLOT）被选中时，向上冒泡选中事件
-  onChildSelect(childNode: ComponentNodeModel): void {
-    this.selectComponent.emit(childNode);
   }
 
   isSelected(component: ComponentNodeModel): boolean {

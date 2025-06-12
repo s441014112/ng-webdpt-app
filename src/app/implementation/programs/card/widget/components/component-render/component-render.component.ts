@@ -33,6 +33,10 @@ import { SlotComponentComponent } from '../slot-component/slot-component.compone
   selector: 'app-component-renderer',
   templateUrl: './component-render.component.html',
   styleUrls: ['./component-render.component.less'],
+  host: {
+    '[style.display]': 'flex',
+    '[style.width]': '"100%"',
+  }
 })
 
 export class ComponentRenderComponent implements OnInit, OnChanges, OnDestroy {

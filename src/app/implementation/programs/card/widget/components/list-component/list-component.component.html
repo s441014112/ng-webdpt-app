@@ -4,7 +4,8 @@
      [ngStyle]="{
        'background-color': listProps.backgroundColor,
        'padding': listProps.padding,
-       'border-radius': listProps.borderRadius
+       'border-radius': listProps.borderRadius,
+       'gap': listProps.rowGap
      }"
      cdkDrag
      [id]="node!.id"
@@ -14,19 +15,16 @@
      [cdkDropListConnectedTo]="allCanvasDropListIds"
      (cdkDropListDropped)="onListDrop($event)"
 >
-  <div class="list-slots-container"
-       [ngStyle]="{ 'gap': listProps.rowGap }">
-    <ng-container *ngIf="node.children && node.children.length > 0;">
-      <ng-container *ngFor="let childNode of node.children">
-        <app-component-renderer
-          *ngIf="childNode.type === componentTypes.SLOT"
-          [node]="childNode"
-          [selectedComponentId]="selectedComponentId"
-          (selectComponent)="onChildSelect($event)"
-          (dropEvent)="onListDrop($event)"
-          [allCanvasDropListIds]="allCanvasDropListIds">
-        </app-component-renderer>
-      </ng-container>
+<ng-container *ngIf="slotChildren.length > 0;">
+  <ng-container *ngFor="let slot of slotChildren">
+      <app-component-renderer
+        *ngIf="slot.type === componentTypes.SLOT"
+        [node]="slot"
+        [selectedComponentId]="selectedComponentId"
+        (selectComponent)="selectComponent.emit($event)"
+        (dropEvent)="onListDrop($event)"
+        [allCanvasDropListIds]="allCanvasDropListIds">
+      </app-component-renderer>
     </ng-container>
-  </div>
+  </ng-container>
 </div>

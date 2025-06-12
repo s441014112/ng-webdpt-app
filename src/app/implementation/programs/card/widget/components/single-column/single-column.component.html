@@ -14,13 +14,7 @@
      [cdkDropListData]="node!.children" [cdkDropListConnectedTo]="allCanvasDropListIds"
      (cdkDropListDropped)="onSingleColumnDrop($event)"
 >
-
-  <div class="component-actions" *ngIf="isSelected(node)">
-    <span class="component-name">{{ node.name }}</span>
-  </div>
-
   <ng-container *ngIf="slotChildren.length > 0">
-    <div class="multi-column-slots">
       <ng-container *ngFor="let slot of slotChildren">
         <app-component-renderer
           [node]="slot"
@@ -28,6 +22,5 @@
           (selectComponent)="selectComponent.emit($event)"
           (dropEvent)="onSingleColumnDrop($event)" [allCanvasDropListIds]="allCanvasDropListIds" ></app-component-renderer>
       </ng-container>
-    </div>
   </ng-container>
 </div>

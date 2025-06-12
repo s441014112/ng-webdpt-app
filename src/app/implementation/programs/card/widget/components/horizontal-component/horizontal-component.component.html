@@ -14,13 +14,7 @@
      [cdkDropListConnectedTo]="allCanvasDropListIds"
      (cdkDropListDropped)="onHorizontalDrop($event)"
 >
-
-  <div class="component-actions" *ngIf="isSelected(node)">
-    <span class="component-name">{{ node.name }}</span>
-  </div>
-
   <ng-container *ngIf="slotChildren.length > 0;">
-    <div class="horizontal-slots-container">
       <ng-container *ngFor="let slot of slotChildren">
         <app-component-renderer
           *ngIf="slot.type === componentTypes.SLOT"
@@ -31,6 +25,5 @@
           [allCanvasDropListIds]="allCanvasDropListIds">
         </app-component-renderer>
       </ng-container>
-    </div>
   </ng-container>
 </div>

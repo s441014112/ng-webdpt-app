@@ -1,10 +1,12 @@
 .horizontal-component {
-  width: 100%;
-  min-height: 80px;
   box-sizing: border-box;
   border: 1px dashed transparent;
   transition: border 0.2s ease-in-out;
   position: relative;
+
+  display: flex;
+  justify-content: space-between;
+  overflow-x: scroll;
 
   &:hover {
     border-color: rgba(0, 100, 250, 1); // 鼠标悬停时显示虚线边框
@@ -12,10 +14,6 @@
 
   &.selected {
     border: 1px dashed rgba(0, 100, 250, 1); // 选中时显示边框
-  }
-
-  .horizontal-slots-container {
-    overflow-x: scroll;
   }
 
 }
