@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 
-import  { Input, Output, EventEmitter } from '@angular/core';
+import { Input, Output, EventEmitter } from '@angular/core';
 import { CdkDragDrop } from '@angular/cdk/drag-drop'; // 导入 CdkDragDrop 类型
 
 
 import { ComponentNodeModel, ListProps } from '../../../interface/index';
+import { COMPONENT_TYPE } from '../../../enum/index'; // 导入 COMPONENT_TYPE 枚举
 
 @Component({
   selector: 'app-list-component',
@@ -22,6 +23,8 @@ export class ListComponentComponent implements OnInit {
   // 新增：用于将拖放事件向上冒泡
   @Output() dropEvent = new EventEmitter<CdkDragDrop<any>>();
 
+  // 引入 COMPONENT_TYPE 以在模板中使用
+  componentTypes = COMPONENT_TYPE;
 
   constructor() {}
 
@@ -36,7 +39,7 @@ export class ListComponentComponent implements OnInit {
     this.selectComponent.emit(component);
   }
 
-  // 当内部的 SingleColumnComponent 被选中时，向上冒泡选中事件
+  // 当内部的子组件（现在是 SLOT）被选中时，向上冒泡选中事件
   onChildSelect(childNode: ComponentNodeModel): void {
     this.selectComponent.emit(childNode);
   }
@@ -45,12 +48,9 @@ export class ListComponentComponent implements OnInit {
     return this.selectedComponentId === component.id;
   }
 
-  /**
-   * 处理从 ListComponent 自身捕获到的拖放事件。
-   * 将事件向上冒泡。
-   * @param event 拖放事件对象
-   */
-  onListDrop(event: CdkDragDrop<any>): void {
+  // 处理 List 组件内部的拖放事件
+  onListDrop(event: CdkDragDrop<ComponentNodeModel[]>): void {
+    // 将拖放事件向上冒泡到 CanvasComponent 进行统一处理
     this.dropEvent.emit(event);
   }
 }

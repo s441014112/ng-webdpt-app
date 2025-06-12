@@ -14,16 +14,19 @@
      [cdkDropListConnectedTo]="allCanvasDropListIds"
      (cdkDropListDropped)="onListDrop($event)"
 >
-  <div class="list-columns-container"
+  <div class="list-slots-container"
        [ngStyle]="{ 'gap': listProps.rowGap }">
-    <ng-container *ngFor="let childNode of node.children">
-      <app-single-column-component
-        [node]="childNode"
-        [selectedComponentId]="selectedComponentId"
-        (selectComponent)="onChildSelect($event)"
-        (dropEvent)="onListDrop($event)"
-        [allCanvasDropListIds]="allCanvasDropListIds">
-      </app-single-column-component>
+    <ng-container *ngIf="node.children && node.children.length > 0;">
+      <ng-container *ngFor="let childNode of node.children">
+        <app-component-renderer
+          *ngIf="childNode.type === componentTypes.SLOT"
+          [node]="childNode"
+          [selectedComponentId]="selectedComponentId"
+          (selectComponent)="onChildSelect($event)"
+          (dropEvent)="onListDrop($event)"
+          [allCanvasDropListIds]="allCanvasDropListIds">
+        </app-component-renderer>
+      </ng-container>
     </ng-container>
   </div>
 </div>

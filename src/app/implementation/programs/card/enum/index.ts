@@ -10,7 +10,7 @@ export enum COMPONENT_TYPE {
   IMAGE = 'IMAGE', // 图片
   BUTTON = 'BUTTON', // 按钮
   ROOT = 'ROOT', // 根容器节点
-  SLOT = 'SLOT', // 插槽   新增专用 其他人忽略
+  SLOT = 'SLOT', // 插槽
 }
 
 // 内容组件字体大小
