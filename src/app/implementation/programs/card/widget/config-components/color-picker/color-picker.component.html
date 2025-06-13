@@ -1,0 +1,25 @@
+<nz-select
+  [(ngModel)]="selectedColor"
+  nzAllowClear
+  nzPlaceHolder="选择颜色"
+  (ngModelChange)="onColorSelect()"
+  [nzDropdownMatchSelectWidth]="false"
+  nzDropdownClassName="color-picker-dropdown"
+  [nzCustomTemplate]="colorInput"
+>
+  <div class="color-row" *ngFor="let row of colors"> 
+    <div class="color-block-grid" *ngFor="let color of row">
+      <nz-option [nzValue]="color.value" [nzLabel]="color.text" [nzCustomContent]="true">
+        <div class="color-block-option">
+          <span class="color-block-grid" [style.background-color]="color.value"></span>
+        </div>
+      </nz-option>
+    </div>
+  </div>
+</nz-select>
+<ng-template #colorInput let-selected>
+  <div class="selected-color-display">
+    <span class="color-square" [style.background-color]="selectedColor"></span>
+    <span class="color-name">{{ selectedColor || '请选择颜色' }}</span>
+  </div>
+</ng-template>

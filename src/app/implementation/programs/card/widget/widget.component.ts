@@ -7,6 +7,12 @@ import * as uuid from 'uuid';
 import { ComponentNodeModel, RootProps, SingleColumnProps, MultiColumnProps, HorizontalProps, ListProps, SlotProps, TitleProps, ContentProps, DividerProps, ImageProps, ButtonProps } from '../interface';
 import { COMPONENT_TYPE, ButtonType, ButtonWidthMode, ContentFontSize, DividerLineType, ImageFixedWidthSize, ImageWidthMode, AlignType } from '../enum'; // 确保导入所有必要的枚举
 
+interface Color {
+  text: string;
+  value: string;
+  label?: string;
+  label1?: string;
+}
 @Component({
   selector: 'app-widget',
   templateUrl: './widget.component.html',
@@ -386,6 +392,7 @@ export class WidgetComponent implements OnInit {
           return;
         }
         if (event.previousContainer === event.container) {
+          // const currentIndex = this.calculateCurrentIndexY(dropPoint, currentContainerNode.children);
           // 在同一个容器内排序
           moveItemInArray(previousContainerNode.children, event.previousIndex, event.currentIndex);
         }
@@ -420,6 +427,41 @@ export class WidgetComponent implements OnInit {
 
       this.rootNode = { ...this.rootNode! }; // 触发变更检测
       this.updateAllCanvasDropListIds(this.rootNode); // 更新所有可拖拽区域的ID
+    }
+  }
+
+  // 手动计算currentIndex
+  calculateCurrentIndexY(dropPoint, targetChildren): number { 
+    // 如果目标容器有子元素，需要根据鼠标位置判断插入的精确索引
+    if (targetChildren.length > 0) {
+      let foundIndex = -1;
+      for (let i = 0; i < targetChildren.length; i++) {
+        const childNode = targetChildren[i];
+        const childElement = document.getElementById(childNode.id);
+
+        if (childElement) {
+          const childRect = childElement.getBoundingClientRect();
+          // 假设是垂直排列的组件，判断 dropPoint.y 在哪个子组件的上方或下方
+          // 如果是水平排列，则需要判断 dropPoint.x
+          // 简单判断：如果 dropPoint.y 在当前子组件的中心线之前
+          const childCenterY = childRect.top + childRect.height / 2;
+
+          // 这里需要根据你的组件布局方式来精确判断插入位置
+          // 对于垂直布局（如 Root, Slot），判断 Y 轴
+          // 对于水平布局（如 Horizontal），判断 X 轴
+          
+          // 这是一个通用的垂直布局判断逻辑
+          if (dropPoint.y < childCenterY) {
+            foundIndex = i;
+            break;
+          }
+        }
+      }
+      // 如果循环结束仍未找到，表示拖拽到最后一个元素的后面
+      return foundIndex === -1 ? targetChildren.length : foundIndex;
+    } else {
+      // 目标容器为空，直接插入到第一个位置
+      return 0;
     }
   }
 
@@ -681,5 +723,9 @@ export class WidgetComponent implements OnInit {
     }
 
     return false; // 默认不允许
+  }
+
+  handleColorSelection(color: Color): void {
+    console.log('在父组件中接收到选择的颜色:', color);
   }
 }

@@ -1,0 +1,45 @@
+<div class="background-config-container p-4 rounded-lg shadow-sm">
+  <!-- 背景标题 -->
+  <div class="mb-4 text-lg font-semibold text-gray-800">水平对齐</div>
+
+  <!-- 卡片式 Radio 组 -->
+  <nz-radio-group 
+    [(ngModel)]="justifyContent" 
+    (ngModelChange)="onJustifyChange($event)"
+    nzButtonStyle="solid" 
+    class="flex justify-center mb-6" 
+  >
+    <label nz-radio-button nzValue="flex-start" class="flex-1 text-center py-2 rounded-l-md">flex-start</label>
+    <label nz-radio-button nzValue="center" class="flex-1 text-center py-2 rounded-r-md">center</label>
+    <label nz-radio-button nzValue="flex-end" class="flex-1 text-center py-2 rounded-r-md">flex-end</label>
+  </nz-radio-group>
+
+  <div class="mb-4 text-lg font-semibold text-gray-800">垂直对齐</div>
+
+  <nz-radio-group 
+    [(ngModel)]="alignItems" 
+    (ngModelChange)="onAlignChange($event)"
+    nzButtonStyle="solid" 
+    class="flex justify-center mb-6" 
+  >
+    <label nz-radio-button nzValue="flex-start" class="flex-1 text-center py-2 rounded-l-md">flex-start</label>
+    <label nz-radio-button nzValue="center" class="flex-1 text-center py-2 rounded-r-md">center</label>
+    <label nz-radio-button nzValue="flex-end" class="flex-1 text-center py-2 rounded-r-md">flex-end</label>
+  </nz-radio-group>
+
+  <ng-container>
+    <div class="mb-4 flex items-center">
+      <span class="w-24 text-gray-700 mr-2">行间距</span>
+      <nz-select [(ngModel)]="currentLineHeight" (ngModelChange)="onLineHeightChange($event)" class="flex-1 rounded-md" name="lineHeight">
+        <nz-option *ngFor="let option of spacingOptions" [nzValue]="option" [nzLabel]="option + 'px'"></nz-option>
+      </nz-select>
+    </div>
+
+    <div class="flex items-center">
+      <span class="w-24 text-gray-700 mr-2">内边距</span>
+      <nz-select [(ngModel)]="currentPadding" (ngModelChange)="onPaddingChange($event)" class="flex-1 rounded-md" name="padding">
+        <nz-option *ngFor="let option of spacingOptions" [nzValue]="option" [nzLabel]="option + 'px'"></nz-option>
+      </nz-select>
+    </div>
+  </ng-container>
+</div>

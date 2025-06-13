@@ -80,7 +80,7 @@
         </ng-container>
         <div *ngIf="!rootNode" class="empty-canvas-placeholder">
           <p>从左侧拖拽组件到此处开始创建卡片</p>
-          <p><i nz-icon nzType="drag" nzTheme="outline"></i></p>
+          <p><img class="component-icon" src="assets/template/nodata.png" alt="暂无数据" /></p>
         </div>
       </div>
     </nz-content>
@@ -95,6 +95,7 @@
       </div>
       <ng-container *ngIf="!selectedComponent">
         <p>选择元素查看相关配置</p>
+        <app-button-config [properties]="selectedComponent?.props"></app-button-config>
       </ng-container>
     </nz-sider>
   </nz-layout>

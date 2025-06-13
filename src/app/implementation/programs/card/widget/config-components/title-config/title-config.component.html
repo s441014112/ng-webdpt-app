@@ -1,0 +1,23 @@
+<div class="background-config-container p-4 rounded-lg shadow-sm">
+
+  <div class="mb-4 text-lg font-semibold text-gray-800">颜色</div>
+
+  <ng-container>
+    <div class="flex items-center justify-center">
+      <app-color-picker [currentColor]="fontColor" (colorChange)="onColorChange($event)"></app-color-picker>
+    </div>
+  </ng-container>
+
+  <div class="mb-4 text-lg font-semibold text-gray-800">对齐</div>
+
+  <nz-radio-group 
+    [(ngModel)]="align" 
+    (ngModelChange)="onAlignChange($event)"
+    nzButtonStyle="solid" 
+    class="flex justify-center mb-6" 
+  >
+    <label nz-radio-button nzValue="left" class="flex-1 text-center py-2 rounded-l-md">left</label>
+    <label nz-radio-button nzValue="center" class="flex-1 text-center py-2 rounded-r-md">center</label>
+    <label nz-radio-button nzValue="right" class="flex-1 text-center py-2 rounded-r-md">right</label>
+  </nz-radio-group>
+</div>

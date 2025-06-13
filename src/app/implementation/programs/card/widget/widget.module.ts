@@ -6,6 +6,13 @@ import { NzCollapseModule } from 'ng-zorro-antd/collapse';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzImageModule } from 'ng-zorro-antd/image';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
+import { NzSelectModule } from 'ng-zorro-antd/select';
+import { FormsModule } from '@angular/forms';
+import { NzRadioModule } from 'ng-zorro-antd/radio';
+import { NzListModule } from 'ng-zorro-antd/list';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
+import { NzSwitchModule } from 'ng-zorro-antd/switch';
 
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { WidgetRoutingModule } from './widget-routing.module';
@@ -23,6 +30,12 @@ import { ButtonComponentComponent } from './components/button-component/button-c
 import { ListComponentComponent } from './components/list-component/list-component.component';
 import { ComponentRenderComponent } from './components/component-render/component-render.component';
 import { SlotComponentComponent } from './components/slot-component/slot-component.component';
+import { ColorPickerComponent } from './config-components/color-picker/color-picker.component';
+import { BackgroundConfigComponent } from './config-components/background-config/background-config.component';
+import { LayoutConfigComponent } from './config-components/layout-config/layout-config.component';
+import { SlotConfigComponent } from './config-components/slot-config/slot-config.component';
+import { TitleConfigComponent } from './config-components/title-config/title-config.component';
+import { ButtonConfigComponent } from './config-components/button-config/button-config.component';
 
 
 @NgModule({
@@ -39,7 +52,13 @@ import { SlotComponentComponent } from './components/slot-component/slot-compone
     ButtonComponentComponent,
     ListComponentComponent,
     ComponentRenderComponent,
-    SlotComponentComponent
+    SlotComponentComponent,
+    ColorPickerComponent,
+    BackgroundConfigComponent,
+    LayoutConfigComponent,
+    SlotConfigComponent,
+    TitleConfigComponent,
+    ButtonConfigComponent
   ],
   imports: [
     CommonModule,
@@ -50,7 +69,14 @@ import { SlotComponentComponent } from './components/slot-component/slot-compone
     NzImageModule,
     NzDividerModule,
     DragDropModule,
-    WidgetRoutingModule
+    WidgetRoutingModule,
+    NzSelectModule,
+    FormsModule,
+    NzRadioModule,
+    NzListModule,
+    NzInputModule,
+    NzInputNumberModule,
+    NzSwitchModule
   ],
   exports: [
     SingleColumnComponent,
@@ -63,7 +89,8 @@ import { SlotComponentComponent } from './components/slot-component/slot-compone
     ImageComponentComponent,
     ButtonComponentComponent,
     ListComponentComponent,
-    SlotComponentComponent
+    SlotComponentComponent,
+    ColorPickerComponent
   ]
 })
 export class WidgetModule { }

@@ -53,8 +53,6 @@ export interface ListProps extends LayoutComponentProps {
 export interface TitleProps {
   text: string;
   fontColor?: string;
-  fontSize?: string;
-  fontWeight?: 'normal' | 'bold';
   align?: string;
 }
 
@@ -94,12 +92,11 @@ export interface ImageProps {
 // 按钮组件属性
 export interface ButtonProps {
   buttonType?: string; // 按钮类型 
-  buttonText: string;
+  buttonText?: string;
   widthMode?: 'auto' | 'stretch' | 'fixed'; // 宽度模式 
   width?: number; // 固定宽度时的值 
   align?: string; // 对齐方式 
   disabledAfterTrigger?: boolean; // 触发后是否禁用 
   actionType?: 'CALL_PLUGIN' | 'OPEN_URL'; // 按钮操作 
-  actionValue?: string; // 操作值 (URL 或 插件ID/参数) 
 }
 
