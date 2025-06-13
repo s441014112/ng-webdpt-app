@@ -549,19 +549,13 @@ export class WidgetComponent implements OnInit {
           children: horizontalSlots
         };
       case COMPONENT_TYPE.LIST:
-        // List 默认包含三个 SINGLE_COLUMN，每个 SINGLE_COLUMN 内部有一个 SLOT
+        // List 默认包含三个SLOT竖向排列
         const listSingleColumns: ComponentNodeModel[] = Array.from({ length: 3 }).map(() => ({
           id: uuid.v4(),
           type: COMPONENT_TYPE.SLOT,
           name: '插槽',
           props: { padding: '4px', rowGap: '4px', alignItems: 'flex-start', justifyContent: 'flex-start' } as SlotProps,
-          children: [{
-            id: uuid.v4(),
-            type: COMPONENT_TYPE.SINGLE_COLUMN,
-            name: '单列',
-            props: { backgroundMode: 'transparent', backgroundColor: 'transparent', rowGap: '8px', padding: '8px', borderRadius: '0px' } as SingleColumnProps,
-            children: []
-          }]
+          children: []
         }));
         return {
           ...commonProps,
@@ -665,10 +659,7 @@ export class WidgetComponent implements OnInit {
         console.warn(`Rule Violation: Content components cannot be a direct child of layout components (${targetType}). They must be placed inside a SLOT.`);
         return false;
       }
-      // 不能与 SLOT 同级 (由上述规则隐式处理，因为SLOT只存在于布局组件下，内容组件要么在ROOT要么在SLOT)
     }
-
-    // Default: 如果没有特定规则，则不允许拖放
     return false;
   }
 
