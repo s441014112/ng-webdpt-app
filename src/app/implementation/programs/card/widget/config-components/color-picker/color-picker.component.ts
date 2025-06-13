@@ -86,6 +86,17 @@ export class ColorPickerComponent implements OnInit {
 
   constructor() { }
 
+  get colorName(): string {
+    for (let i = 0; i < this.colors.length; i++) {
+      for (let j = 0; j < this.colors[i].length; j++) {
+        if (this.colors[i][j].value === this.selectedColor) {
+          return this.colors[i][j].text;
+        }
+      }
+
+    }
+  }
+
   ngOnInit(): void {
     this.selectedColor = this.currentColor;
   }

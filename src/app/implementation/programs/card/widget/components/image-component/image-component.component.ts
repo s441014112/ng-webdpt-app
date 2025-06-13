@@ -34,7 +34,7 @@ export class ImageComponentComponent implements OnInit {
   get calculatedWidth(): number | string {
     let result
     if (this.node.props.widthMode === ImageWidthMode.FULL) {
-      result = '100%';
+      result = 'auto';
     } else {
       switch (this.node.props.fixedWidthSize) {
         case ImageFixedWidthSize.SMALL:

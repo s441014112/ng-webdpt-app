@@ -570,7 +570,7 @@ export class WidgetComponent implements OnInit {
       case COMPONENT_TYPE.CONTENT:
         return { ...commonProps, name: '内容', props: { text: '默认内容信息', fontColor: '#666', fontSize: ContentFontSize.REGULAR, fontWeight: 'normal', align: AlignType.LEFT, maxLines: 0 } as ContentProps };
       case COMPONENT_TYPE.DIVIDER:
-        return { ...commonProps, name: '分割线', props: { color: '#e0e0e0', paddingTop: '4px', paddingBottom: '4px', lineType: DividerLineType.SOLID } as DividerProps };
+        return { ...commonProps, name: '分割线', props: { color: '#e0e0e0', paddingTop: '10px', paddingBottom: '10px', lineType: DividerLineType.SOLID } as DividerProps };
       case COMPONENT_TYPE.IMAGE:
         return { ...commonProps, name: '图片', props: { src: '', widthMode: ImageWidthMode.FIXED, fixedWidthSize: ImageFixedWidthSize.CUSTOM, customWidth: 40, customHeight: 40, borderRadius: '0px', align: AlignType.CENTER } as ImageProps };
       case COMPONENT_TYPE.BUTTON:

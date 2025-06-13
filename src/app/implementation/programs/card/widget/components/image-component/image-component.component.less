@@ -1,17 +1,13 @@
-// src/app/features/card-editor/components/widgets/basic-components/image/image.component.less
-
 .image-component-wrapper {
-  width: 100%;
   box-sizing: border-box;
-  padding: 4px 0; // 给选中框一些空间
-
+  padding: 4px;
   border: 1px dashed transparent;
   transition: border 0.2s ease-in-out;
   position: relative;
-  display: flex; // 使图片在容器内居中
+  display: inline-flex;
   justify-content: center;
   align-items: center;
-  min-height: 50px; // 确保即使没有图片也有一个可见区域
+  width:fit-content;
 
   &:hover {
     border-color: #4E6FFF;
@@ -22,12 +18,10 @@
   }
 
   .image-container {
-    width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
     position: relative;
-    min-height: 50px;
 
     :deep(.ant-image) {
       display: flex;
