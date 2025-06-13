@@ -280,22 +280,15 @@ export class WidgetComponent implements OnInit {
             }
         }
     }
-
-    let actualTargetContainerNode = null;
     // 如果通过坐标找到了最佳匹配
-    if (bestMatchId) {
-      actualTargetContainerId = bestMatchId;
-    } else {
-      actualTargetContainerId = event.container.id;
-    }
-    
+    actualTargetContainerId = bestMatchId || event.container.id;
 
     const draggedData = event.item.data;
     const draggedType = typeof draggedData === 'string' ? draggedData : draggedData.type; 
 
     // 1. 获取初始节点信息，获取结束节点信息
     // currentContainerId 是当前鼠标所在的 drop list 的 ID
-    const currentContainerId = actualTargetContainerId;
+    let currentContainerId = actualTargetContainerId;
     // previousContainerId 是被拖动元素原始所在的 drop list 的 ID
     const previousContainerId = event.previousContainer.id;
 
@@ -303,6 +296,7 @@ export class WidgetComponent implements OnInit {
     let currentContainerNode: ComponentNodeModel | null = null;
     if (currentContainerId === 'canvas-root-drop-list') {
       currentContainerNode = this.rootNode;
+      currentContainerId = this.rootNode.id;
     } else {
       currentContainerNode = this.findComponentNodeById(this.rootNode, currentContainerId);
     }
@@ -391,10 +385,11 @@ export class WidgetComponent implements OnInit {
           console.warn('SLOT components can only be moved within layout components.');
           return;
         }
-        if (event.previousContainer === event.container) {
-          // const currentIndex = this.calculateCurrentIndexY(dropPoint, currentContainerNode.children);
+        if (event.previousContainer.id === currentContainerId) {
+          const currentIndex = this.calculateCurrentIndexY(dropPoint, currentContainerNode.children);
           // 在同一个容器内排序
-          moveItemInArray(previousContainerNode.children, event.previousIndex, event.currentIndex);
+          moveItemInArray(previousContainerNode.children, event.previousIndex, currentIndex);
+          this.updateAllCanvasDropListIds(this.rootNode);
         }
         return;
       }
@@ -409,9 +404,10 @@ export class WidgetComponent implements OnInit {
           return;
         }
 
-        if (event.previousContainer === event.container) {
+        if (event.previousContainer.id === currentContainerId) {
           // 在同一个容器内排序 (SLOT 或 ROOT)
-          moveItemInArray(previousContainerNode.children, event.previousIndex, event.currentIndex);
+          const currentIndex = this.calculateCurrentIndexY(dropPoint, currentContainerNode.children);
+          moveItemInArray(previousContainerNode.children, event.previousIndex, currentIndex);
           console.log(`Reordered content components in container ${previousContainerNode.id}.`);
         } else {
           // 从一个容器移动到另一个容器 (SLOT <-> SLOT, SLOT -> ROOT, ROOT -> SLOT)
@@ -431,39 +427,28 @@ export class WidgetComponent implements OnInit {
   }
 
   // 手动计算currentIndex
-  calculateCurrentIndexY(dropPoint, targetChildren): number { 
-    // 如果目标容器有子元素，需要根据鼠标位置判断插入的精确索引
-    if (targetChildren.length > 0) {
-      let foundIndex = -1;
-      for (let i = 0; i < targetChildren.length; i++) {
+  calculateCurrentIndexY(dropPoint: { x: number, y: number }, targetChildren: ComponentNodeModel[]): number {
+    if (!targetChildren || targetChildren.length === 0) {
+        return 0; // 空容器，插入到第一个位置
+    }
+
+    for (let i = 0; i < targetChildren.length; i++) {
         const childNode = targetChildren[i];
         const childElement = document.getElementById(childNode.id);
-
         if (childElement) {
-          const childRect = childElement.getBoundingClientRect();
-          // 假设是垂直排列的组件，判断 dropPoint.y 在哪个子组件的上方或下方
-          // 如果是水平排列，则需要判断 dropPoint.x
-          // 简单判断：如果 dropPoint.y 在当前子组件的中心线之前
-          const childCenterY = childRect.top + childRect.height / 2;
+            const childRect = childElement.getBoundingClientRect();
+            const childCenterY = childRect.top + childRect.height / 2;
 
-          // 这里需要根据你的组件布局方式来精确判断插入位置
-          // 对于垂直布局（如 Root, Slot），判断 Y 轴
-          // 对于水平布局（如 Horizontal），判断 X 轴
-          
-          // 这是一个通用的垂直布局判断逻辑
-          if (dropPoint.y < childCenterY) {
-            foundIndex = i;
-            break;
-          }
+            // 如果鼠标 Y 坐标在上半个区域，插入到当前位置
+            if (dropPoint.y < childCenterY) {
+                return i;
+            }
         }
-      }
-      // 如果循环结束仍未找到，表示拖拽到最后一个元素的后面
-      return foundIndex === -1 ? targetChildren.length : foundIndex;
-    } else {
-      // 目标容器为空，直接插入到第一个位置
-      return 0;
     }
-  }
+
+    // 如果鼠标在最后一个组件的下方，插入到末尾
+    return targetChildren.length;
+}
 
   // 辅助方法：根据ID查找组件节点
   private findComponentNodeById(node: ComponentNodeModel | null, id: string): ComponentNodeModel | null {
