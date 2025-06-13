@@ -1,4 +1,5 @@
-# Ng-Web端平台
+# 一种模仿字节Coze网站，实现自定义卡片编辑器，拖拽式生成页面的实现方法
+## 实现了从左侧拖拽组件进画布，画布中组件自由嵌套拖拽，右侧面板可配置的功能
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 6.0.8.
 需搭配nodejs 8.8以上(含npm)
