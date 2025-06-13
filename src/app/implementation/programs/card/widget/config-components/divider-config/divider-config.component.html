@@ -1,0 +1,41 @@
+<div class="background-config-container p-4 rounded-lg shadow-sm">
+
+
+  <div class="mb-4 text-lg font-semibold text-gray-800">线条颜色</div>
+
+  <ng-container>
+    <div class="flex items-center justify-center">
+      <app-color-picker [currentColor]="color" (colorChange)="onColorChange($event)"></app-color-picker>
+    </div>
+  </ng-container>
+
+  <div class="mb-4 text-lg font-semibold text-gray-800">上边距</div>
+
+  <ng-container>
+    <div class="mb-4 flex items-center">
+      <nz-select [(ngModel)]="paddingTop" (ngModelChange)="onPaddingTopChange($event)" class="flex-1 rounded-md">
+        <nz-option *ngFor="let option of spacingOptions" [nzValue]="option" [nzLabel]="option"></nz-option>
+      </nz-select>
+    </div>
+  </ng-container>
+
+  <div class="mb-4 text-lg font-semibold text-gray-800">下边距</div>
+
+  <ng-container>
+    <div class="mb-4 flex items-center">
+      <nz-select [(ngModel)]="paddingBottom" (ngModelChange)="onPaddingBottomChange($event)" class="flex-1 rounded-md">
+        <nz-option *ngFor="let option of spacingOptions" [nzValue]="option" [nzLabel]="option"></nz-option>
+      </nz-select>
+    </div>
+  </ng-container>
+
+  <div class="mb-4 text-lg font-semibold text-gray-800">线型</div>
+
+  <ng-container>
+    <div class="mb-4 flex items-center">
+      <nz-select [(ngModel)]="lineType" (ngModelChange)="onTypeChange($event)" class="flex-1 rounded-md">
+        <nz-option *ngFor="let option of typeOptions" [nzValue]="option.value" [nzLabel]="option.label"></nz-option>
+      </nz-select>
+    </div>
+  </ng-container>
+</div>

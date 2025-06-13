@@ -36,6 +36,9 @@ import { LayoutConfigComponent } from './config-components/layout-config/layout-
 import { SlotConfigComponent } from './config-components/slot-config/slot-config.component';
 import { TitleConfigComponent } from './config-components/title-config/title-config.component';
 import { ButtonConfigComponent } from './config-components/button-config/button-config.component';
+import { ContentConfigComponent } from './config-components/content-config/content-config.component';
+import { ImageConfigComponent } from './config-components/image-config/image-config.component';
+import { DividerConfigComponent } from './config-components/divider-config/divider-config.component';
 
 
 @NgModule({
@@ -58,7 +61,10 @@ import { ButtonConfigComponent } from './config-components/button-config/button-
     LayoutConfigComponent,
     SlotConfigComponent,
     TitleConfigComponent,
-    ButtonConfigComponent
+    ButtonConfigComponent,
+    ContentConfigComponent,
+    ImageConfigComponent,
+    DividerConfigComponent
   ],
   imports: [
     CommonModule,

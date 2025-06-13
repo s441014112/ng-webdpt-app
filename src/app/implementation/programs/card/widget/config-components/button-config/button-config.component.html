@@ -28,7 +28,7 @@
 
   <ng-container *ngIf="widthMode == 'fixed'">
     <div class="mb-4 flex items-center">
-      <nz-input-number [(ngModel)]="width" [nzMin]="1" [nzMax]="420" [nzStep]="1"></nz-input-number> 
+      <nz-input-number [(ngModel)]="width" [nzMin]="1" [nzMax]="420" [nzStep]="1" (ngModelChange)="onWidthChange($event)"></nz-input-number> 
     </div>
   </ng-container>
 
