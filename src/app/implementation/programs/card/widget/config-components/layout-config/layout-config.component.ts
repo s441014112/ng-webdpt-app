@@ -17,7 +17,7 @@ export interface SlotConfig {
 
 export class LayoutConfigComponent implements OnInit {
   // 接收父组件传入的初始槽位数量
-  @Input() initialSlotCount: number = 0;
+  @Input() initialSlotCount: number = 1;
   // 接收父组件传入的初始背景配置
   @Input() initialLayoutConfig: LayoutComponentProps = {
     slotCount: 1, // 插槽数量 (虽然单列组件默认只有一个插槽，但多列/横滑组件会用到)
@@ -35,7 +35,7 @@ export class LayoutConfigComponent implements OnInit {
 
   // ----- 内部状态管理 -----
   // 插槽列表
-  slots: SlotConfig[] = [{ id: 111, name: '槽位 1' }];
+  slots: SlotConfig[] = [];
   nextSlotId: number = 1; // 用于生成唯一的槽位 ID
 
   // 背景相关状态

@@ -23,7 +23,7 @@
   <ng-container *ngIf="selectedOption === 'transparent'">
     <div class="mb-4 flex items-center">
       <span class="w-24 text-gray-700 mr-2">行间距</span>
-      <nz-select [(ngModel)]="currentLineHeight" (ngModelChange)="onLineHeightChange($event)" class="flex-1 rounded-md" name="lineHeight">
+      <nz-select [(ngModel)]="rowGap" (ngModelChange)="onLineHeightChange($event)" class="flex-1 rounded-md" name="lineHeight">
         <nz-option *ngFor="let option of spacingOptions" [nzValue]="option" [nzLabel]="option + 'px'"></nz-option>
       </nz-select>
     </div>

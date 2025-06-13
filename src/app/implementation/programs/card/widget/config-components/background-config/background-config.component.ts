@@ -14,7 +14,7 @@ export interface BackgroundProperties extends RootProps {
 })
 export class BackgroundConfigComponent implements OnInit {
   // 接收父组件传入的属性集合
-  @Input() properties: Record<string, any> = { type: 'transparent', rowGap: 0, padding: 0, backgroundColor: '#ffffff' };
+  @Input() properties: BackgroundProperties = { type: 'transparent', rowGap: '', padding: '', backgroundColor: '#ffffff' };
   // 向父组件发出属性变化的事件
   @Output() propertiesChange = new EventEmitter<BackgroundProperties>();
 
@@ -22,7 +22,7 @@ export class BackgroundConfigComponent implements OnInit {
   selectedOption: 'transparent' | 'color' = 'transparent';
 
   // 行间距的当前值
-  currentLineHeight: string = '';
+  rowGap: string = '';
   // 内边距的当前值
   currentPadding: string = '';
   // 颜色的当前值
@@ -37,9 +37,9 @@ export class BackgroundConfigComponent implements OnInit {
     // 根据传入的 properties 初始化组件状态
     if (this.properties) {
       this.selectedOption = this.properties.type;
-      this.currentLineHeight = this.properties.rowGap ?? 0;
-      this.currentPadding = this.properties.padding ?? 0;
-      this.currentColor = this.properties.color ?? '#ffffff';
+      this.rowGap = this.properties.rowGap ?? '';
+      this.currentPadding = this.properties.padding ?? '';
+      this.currentColor = this.properties.backgroundColor ?? '#ffffff';
     }
     // 确保默认值与输出值一致
     this.emitProperties();
@@ -59,7 +59,7 @@ export class BackgroundConfigComponent implements OnInit {
    * @param value 选中的行间距值
    */
   onLineHeightChange(value: string): void {
-    this.currentLineHeight = value;
+    this.rowGap = value;
     this.emitProperties(); // 每次选择变化都发出新的属性集合
   }
 
@@ -86,13 +86,12 @@ export class BackgroundConfigComponent implements OnInit {
    */
   private emitProperties(): void {
     const updatedProperties: BackgroundProperties = {
-      type: this.selectedOption
+      type: this.selectedOption,
+      rowGap: this.rowGap,
+      padding: this.currentPadding,
     };
 
-    if (this.selectedOption === 'transparent') {
-      updatedProperties.rowGap = this.currentLineHeight;
-      updatedProperties.padding = this.currentPadding;
-    } else {
+    if (this.selectedOption === 'color') {
       updatedProperties.backgroundColor = this.currentColor;
     }
     this.propertiesChange.emit(updatedProperties);
