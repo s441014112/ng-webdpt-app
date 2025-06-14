@@ -362,11 +362,12 @@ export class WidgetComponent implements OnInit {
       this.updateAllCanvasDropListIds(this.rootNode); // 更新所有可拖拽区域的ID
     } else {
       // 6. 初始节点来源为画布中 (表明组件要在画布上拖拽排序)
-      console.log('Drag originated from canvas.');
+      console.log('画布中拖拽排序');
 
       // 获取被拖动节点和其父节点
       const draggedNode = event.item.data as ComponentNodeModel;
       const previousContainerNode = this.findComponentNodeById(this.rootNode, previousContainerId);
+
       if (!draggedNode || !previousContainerNode || !previousContainerNode.children) {
         console.warn('出错了没找到节点');
         return;
@@ -374,7 +375,7 @@ export class WidgetComponent implements OnInit {
 
       // 放置规则判断
       if (!this.canDropExistingComponent(draggedNode, currentContainerNode)) {
-        console.warn(`Cannot move ${draggedNode.type} into ${currentContainerNode.type}.`);
+        console.warn(`非法移动${draggedNode.type} 到 ${currentContainerNode.type}.`);
         return;
       }
 
@@ -382,7 +383,7 @@ export class WidgetComponent implements OnInit {
       if (draggedNode.type === COMPONENT_TYPE.SLOT) {
         // 验证拖动范围，SLOT 只能在布局组件内移动
         if (!this.isLayoutComponent(previousContainerNode.type) || !this.isLayoutComponent(currentContainerNode.type)) {
-          console.warn('SLOT components can only be moved within layout components.');
+          console.warn('SLOT只能在布局组件内部移动！！');
           return;
         }
         if (event.previousContainer.id === currentContainerId) {
@@ -400,7 +401,7 @@ export class WidgetComponent implements OnInit {
         const isCurrentSlotOrRoot = currentContainerNode.type === COMPONENT_TYPE.SLOT || currentContainerNode.type === COMPONENT_TYPE.ROOT;
 
         if (!isPreviousSlotOrRoot || !isCurrentSlotOrRoot) {
-          console.warn(`Content components can only be moved between SLOTs or to/from ROOT.`);
+          console.warn(`内容组件只能SLOT内部或者ROOT组件内部移动`);
           return;
         }
 
@@ -408,16 +409,17 @@ export class WidgetComponent implements OnInit {
           // 在同一个容器内排序 (SLOT 或 ROOT)
           const currentIndex = this.calculateCurrentIndexY(dropPoint, currentContainerNode.children);
           moveItemInArray(previousContainerNode.children, event.previousIndex, currentIndex);
-          console.log(`Reordered content components in container ${previousContainerNode.id}.`);
+          console.log(`内容组件移动至 ${previousContainerNode.id}.`);
         } else {
-          // 从一个容器移动到另一个容器 (SLOT <-> SLOT, SLOT -> ROOT, ROOT -> SLOT)
+          // 从一个容器移动到另一个容器 (SLOT <-> SLOT, SLOT -> ROOT, ROOT -> SLOT)，
+          const currentIndex = this.calculateCurrentIndexY(dropPoint, currentContainerNode.children);
           transferArrayItem(
             previousContainerNode.children,
             currentContainerNode.children!,
             event.previousIndex,
-            event.currentIndex
+            currentIndex
           );
-          console.log(`Transferred content component from ${previousContainerNode.id} to ${currentContainerNode.id}.`);
+          console.log(`内容组件移动从 ${previousContainerNode.id} 至 ${previousContainerNode.id}.`);
         }
       }
 
@@ -653,24 +655,19 @@ export class WidgetComponent implements OnInit {
     const draggedType = draggedNode.type;
     const targetType = targetNode.type;
 
-    // Root 组件不可拖动 (规则 1) - 已经在 onDrop 开头处理了
+    // Root 组件不可拖动
     if (draggedType === COMPONENT_TYPE.ROOT) {
-      console.warn('Root component cannot be dragged.');
+      console.warn('Root组件不可移动');
       return false;
     }
-    // Title 组件不可拖动 (规则 8) - 已经在 onDrop 开头处理了
+    // Title 组件不可拖动
     if (draggedType === COMPONENT_TYPE.TITLE) {
-      console.warn('Title component cannot be dragged; it is fixed at the top.');
+      console.warn('标题组件不可移动');
       return false;
     }
-
-    // SLOT 组件的拖动限制 (规则 9)
     if (draggedType === COMPONENT_TYPE.SLOT) {
-      // 只能在当前Slot组件的父级布局组件中排序，不可拖动至外侧
-      // (这个检查是在 onDrop 中通过判断 previousContainerNode.type 和 currentContainerNode.type 来实现的)
-      // 在这里，我们只需要确保目标是一个布局组件
+      // 在这里确保SLOT父级目标是一个布局组件
       if (!this.isLayoutComponent(targetType)) {
-        console.warn(`Rule Violation: SLOT components can only be moved within layout components.`);
         return false;
       }
       // SLOT 不能作为 Root 的直接子级
@@ -680,7 +677,7 @@ export class WidgetComponent implements OnInit {
       return true;
     }
 
-    // 内容组件（Layout Components 和 Primitive Components）的拖动限制 (规则 10)
+    // 其他组件
     if (this.isContentComponent(draggedType)) {
       // 可以在 SLOT 内部移动（排序）,也可以从一个 SLOT 移动到另一个 SLOT
       if (targetType === COMPONENT_TYPE.SLOT) {
@@ -692,7 +689,7 @@ export class WidgetComponent implements OnInit {
       }
       // 不能直接成为布局组件（SINGLE_COLUMN, MULTI_COLUMN, HORIZONTAL, LIST）的直接子级
       if (this.isLayoutComponent(targetType)) {
-        console.warn(`Rule Violation: Content components cannot be a direct child of layout components (${targetType}). They must be placed inside a SLOT.`);
+        console.warn(`(${targetType})不能直接成为布局组件（SINGLE_COLUMN, MULTI_COLUMN, HORIZONTAL, LIST）的直接子级`);
         return false;
       }
       return true;
