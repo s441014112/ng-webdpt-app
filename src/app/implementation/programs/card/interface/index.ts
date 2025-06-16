@@ -12,6 +12,7 @@ export interface ComponentNodeModel {
 
 // Root 组件属性
 export interface RootProps {
+  backgroundMode?: string; // 背景模式 (颜色/透明)
   backgroundColor?: string;
   rowGap?: string; // 行内距
   padding?: string;  // 内边距
@@ -45,9 +46,7 @@ export interface MultiColumnProps extends LayoutComponentProps {}
 export interface HorizontalProps extends LayoutComponentProps {}
 
 // 列表布局组件属性 (内部初始化三个单列组件，可增删，最多8个单列组件)
-export interface ListProps extends LayoutComponentProps {
-  columnCount?: number;  // 单列组件数量 (默认3个，可增删，最多8个)
-}
+export interface ListProps extends LayoutComponentProps {}
 
 // 标题组件属性
 export interface TitleProps {

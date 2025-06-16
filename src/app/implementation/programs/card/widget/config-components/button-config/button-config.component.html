@@ -1,60 +1,58 @@
 <div class="background-config-container p-4 rounded-lg shadow-sm">
   <!-- 背景标题 -->
-  <div class="mb-4 text-lg font-semibold text-gray-800">按钮类型</div>
+  <div class="config-label">按钮类型</div>
 
-  <ng-container>
-    <div class="mb-4 flex items-center">
-      <span class="w-24 text-gray-700 mr-2">按钮类型</span>
-      <nz-select [(ngModel)]="buttonType" (ngModelChange)="onTypeChange($event)" class="flex-1 rounded-md">
-        <nz-option *ngFor="let option of typeOptions" [nzValue]="option.value" [nzLabel]="option.label"></nz-option>
-      </nz-select>
-    </div>
-  </ng-container>
+  <div class="config-container">
+    <nz-select [(ngModel)]="buttonType" (ngModelChange)="onTypeChange($event)" class="flex-1 rounded-md">
+      <nz-option *ngFor="let option of typeOptions" [nzValue]="option.value" [nzLabel]="option.label"></nz-option>
+    </nz-select>
+  </div>
 
   <!-- 卡片式 Radio 组 -->
 
-  <div class="mb-4 text-lg font-semibold text-gray-800">宽度</div>
+  <div class="config-label">宽度</div>
+  <div class="config-container">
+    <nz-radio-group 
+      [(ngModel)]="widthMode" 
+      (ngModelChange)="onWidthModeChange($event)"
+      nzButtonStyle="solid" 
+      class="flex justify-center mb-6" 
+    >
+      <label nz-radio-button nzValue="auto">自适应</label>
+      <label nz-radio-button nzValue="stretch">拉伸</label>
+      <label nz-radio-button nzValue="fixed">固定宽度</label>
+    </nz-radio-group>
+  </div>
 
-  <nz-radio-group 
-    [(ngModel)]="widthMode" 
-    (ngModelChange)="onWidthModeChange($event)"
-    nzButtonStyle="solid" 
-    class="flex justify-center mb-6" 
-  >
-    <label nz-radio-button nzValue="auto" class="flex-1 text-center py-2 rounded-l-md">自适应</label>
-    <label nz-radio-button nzValue="stretch" class="flex-1 text-center py-2 rounded-r-md">拉伸</label>
-    <label nz-radio-button nzValue="fixed" class="flex-1 text-center py-2 rounded-r-md">固定宽度</label>
-  </nz-radio-group>
+  <div class="config-container" *ngIf="widthMode == 'fixed'">
+    <span class="config-label">请输入宽度 </span>
+    <nz-input-number [(ngModel)]="width" [nzMin]="1" [nzMax]="420" [nzStep]="1" (ngModelChange)="onWidthChange($event)"></nz-input-number> 
+  </div>
 
-  <ng-container *ngIf="widthMode == 'fixed'">
-    <div class="mb-4 flex items-center">
-      <nz-input-number [(ngModel)]="width" [nzMin]="1" [nzMax]="420" [nzStep]="1" (ngModelChange)="onWidthChange($event)"></nz-input-number> 
-    </div>
-  </ng-container>
+  <div class="config-label">对齐</div>
+  <div class="config-container">
+    <nz-radio-group 
+      [(ngModel)]="align" 
+      (ngModelChange)="onAlignChange($event)"
+      nzButtonStyle="solid" 
+      class="flex justify-center mb-6" 
+    >
+      <label nz-radio-button nzValue="left" class="flex-1 text-center py-2 rounded-l-md">left</label>
+      <label nz-radio-button nzValue="center" class="flex-1 text-center py-2 rounded-r-md">center</label>
+      <label nz-radio-button nzValue="right" class="flex-1 text-center py-2 rounded-r-md">right</label>
+    </nz-radio-group>
+  </div>
 
-  <div class="mb-4 text-lg font-semibold text-gray-800">对齐</div>
 
-  <nz-radio-group 
-    [(ngModel)]="align" 
-    (ngModelChange)="onAlignChange($event)"
-    nzButtonStyle="solid" 
-    class="flex justify-center mb-6" 
-  >
-    <label nz-radio-button nzValue="left" class="flex-1 text-center py-2 rounded-l-md">left</label>
-    <label nz-radio-button nzValue="center" class="flex-1 text-center py-2 rounded-r-md">center</label>
-    <label nz-radio-button nzValue="right" class="flex-1 text-center py-2 rounded-r-md">right</label>
-  </nz-radio-group>
+  <div class="config-label">触发按钮后禁用</div>
+  <div class="config-container">
+    <nz-switch [(ngModel)]="disabledAfterTrigger" (ngModelChange)="onSwitchChange($event)"></nz-switch> 
+  </div>
 
-  <div class="mb-4 text-lg font-semibold text-gray-800">触发按钮后禁用</div>
-
-  <nz-switch [(ngModel)]="disabledAfterTrigger" (ngModelChange)="onSwitchChange($event)"></nz-switch> 
-
-  <ng-container>
-    <div class="mb-4 flex items-center">
-      <span class="w-24 text-gray-700 mr-2">操作</span>
-      <nz-select [(ngModel)]="actionType" (ngModelChange)="onActionChange($event)" class="flex-1 rounded-md" name="lineHeight">
-        <nz-option *ngFor="let option of actionOptions" [nzValue]="option" [nzLabel]="option"></nz-option>
-      </nz-select>
-    </div>
-  </ng-container>
+  <div class="config-label">操作</div>
+  <div class="config-container">
+    <nz-select [(ngModel)]="actionType" (ngModelChange)="onActionChange($event)" class="flex-1 rounded-md" name="lineHeight">
+      <nz-option *ngFor="let option of actionOptions" [nzValue]="option.value" [nzLabel]="option.label"></nz-option>
+    </nz-select>
+  </div>
 </div>

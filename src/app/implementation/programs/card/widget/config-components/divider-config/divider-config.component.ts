@@ -1,5 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { DividerProps } from '../../../interface';
+import { DividerLineType, PaddingSize } from '../../../enum';
 
 @Component({
   selector: 'app-divider-config',
@@ -25,13 +26,18 @@ export class DividerConfigComponent implements OnInit {
 
   // 下拉框选项
   typeOptions: { label: string, value: string }[] = [
-    { label: '实线', value: 'solid' },
-    { label: '虚线', value: 'dashed' },
-    { label: '点线', value: 'dotted' },
+    { label: '直线', value: DividerLineType.SOLID },
+    { label: '虚线', value: DividerLineType.DASHED },
+    { label: '点线', value: DividerLineType.DOTTED },
   ];
 
-  // 下拉框选项，从 0px 到 8px (新增圆角选项，可以根据需要调整范围)
-  spacingOptions: string[] = Array.from({ length: 33 }, (_, i) => i + 'px'); // [0, 1, ..., 8]
+  // 下拉框选项，从 0px 到 8px
+  spacingOptions: { label: string, value: string }[] = [
+    { label: '无', value: PaddingSize.NONE },
+    { label: '小', value: PaddingSize.SMALL },
+    { label: '中', value: PaddingSize.MEDIUM },
+    { label: '大', value: PaddingSize.LARGE },
+  ]
 
   constructor() { }
 

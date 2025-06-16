@@ -5,7 +5,7 @@ import { ActivatedRoute } from '@angular/router'
 import * as uuid from 'uuid';
 
 import { ComponentNodeModel, RootProps, SingleColumnProps, MultiColumnProps, HorizontalProps, ListProps, SlotProps, TitleProps, ContentProps, DividerProps, ImageProps, ButtonProps } from '../interface';
-import { COMPONENT_TYPE, ButtonType, ButtonWidthMode, ContentFontSize, DividerLineType, ImageFixedWidthSize, ImageWidthMode, AlignType } from '../enum'; // 确保导入所有必要的枚举
+import { COMPONENT_TYPE, ButtonType, ButtonWidthMode, ContentFontSize, DividerLineType, ImageFixedWidthSize, ImageWidthMode, AlignType, ButtonActionType, TextAlignType, BackgroundMode } from '../enum'; // 确保导入所有必要的枚举
 
 interface Color {
   text: string;
@@ -93,9 +93,10 @@ export class WidgetComponent implements OnInit {
       type: COMPONENT_TYPE.ROOT,
       name: '根容器',
       props: {
+        backgroundMode: BackgroundMode.TRANSPARENT,
         backgroundColor: '#ffffff',
-        rowGap: '8px',
-        padding: '8px'
+        rowGap: '4px',
+        padding: '4px'
       } as RootProps,
       children: []
     };
@@ -326,7 +327,7 @@ export class WidgetComponent implements OnInit {
       // 创建新组件节点
       const newComponentNode = this.createComponentNode(draggedType as COMPONENT_TYPE);
       if (!newComponentNode) {
-        console.error('Failed to create new component node.');
+        console.error('创见组件失败.');
         return;
       }
 
@@ -489,20 +490,20 @@ export class WidgetComponent implements OnInit {
 
     switch (type) {
       case COMPONENT_TYPE.ROOT:
-        return { ...commonProps, props: { backgroundColor: '#f0f2f5', padding: '10px', rowGap: '10px' } as RootProps };
+        return { ...commonProps, props: { backgroundMode: BackgroundMode.TRANSPARENT ,backgroundColor: '#ffffff', padding: '4px', rowGap: '4px' } as RootProps };
       case COMPONENT_TYPE.SINGLE_COLUMN:
         // SingleColumn 默认包含一个 SLOT
         const singleColumnSlot: ComponentNodeModel = {
           id: uuid.v4(),
           type: COMPONENT_TYPE.SLOT,
           name: '插槽',
-          props: { padding: '4px', rowGap: '4px', alignItems: 'flex-start', justifyContent: 'flex-start' } as SlotProps,
+          props: { padding: '4px', rowGap: '4px', justifyContent: 'flex-start',alignItems: 'flex-start' } as SlotProps,
           children: []
         };
         return {
           ...commonProps,
           name: '单列',
-          props: { backgroundMode: 'transparent', backgroundColor: 'transparent', rowGap: '8px', padding: '8px', borderRadius: '0px' } as SingleColumnProps,
+          props: { backgroundMode: 'transparent', backgroundColor: '#ffffff', rowGap: '8px', padding: '8px', borderRadius: '12px' } as SingleColumnProps,
           children: [singleColumnSlot]
         };
       case COMPONENT_TYPE.MULTI_COLUMN:
@@ -517,7 +518,7 @@ export class WidgetComponent implements OnInit {
         return {
           ...commonProps,
           name: '多列',
-          props: { slotCount: 3, backgroundMode: 'transparent', backgroundColor: 'transparent', rowGap: '8px', padding: '8px', borderRadius: '0px' } as MultiColumnProps,
+          props: { slotCount: 3, backgroundMode: 'transparent', backgroundColor: '#ffffff', rowGap: '8px', padding: '8px', borderRadius: '12px' } as MultiColumnProps,
           children: multiColumnSlots
         };
       case COMPONENT_TYPE.HORIZONTAL:
@@ -532,7 +533,7 @@ export class WidgetComponent implements OnInit {
         return {
           ...commonProps,
           name: '横滑',
-          props: { slotCount: 3, backgroundMode: 'transparent', backgroundColor: 'transparent', rowGap: '8px', padding: '8px', borderRadius: '0px' } as HorizontalProps,
+          props: { slotCount: 3, backgroundMode: 'transparent', backgroundColor: '#ffffff', rowGap: '8px', padding: '8px', borderRadius: '12px' } as HorizontalProps,
           children: horizontalSlots
         };
       case COMPONENT_TYPE.LIST:
@@ -547,23 +548,23 @@ export class WidgetComponent implements OnInit {
         return {
           ...commonProps,
           name: '列表',
-          props: { columnCount: 3, backgroundMode: 'transparent', backgroundColor: 'transparent', rowGap: '8px', padding: '8px', borderRadius: '0px' } as ListProps,
+          props: { slotCount: 3, backgroundMode: 'transparent', backgroundColor: '#ffffff', rowGap: '8px', padding: '8px', borderRadius: '12px' } as ListProps,
           children: listSingleColumns
         };
       case COMPONENT_TYPE.SLOT:
         return { ...commonProps, name: '插槽', props: { padding: '4px', rowGap: '4px', alignItems: 'flex-start', justifyContent: 'flex-start' } as SlotProps };
       case COMPONENT_TYPE.TITLE:
-        return { ...commonProps, name: '标题', props: { text: '默认标题内容', fontColor: '#333', fontSize: ContentFontSize.REGULAR, fontWeight: 'bold', align: AlignType.CENTER } as TitleProps };
+        return { ...commonProps, name: '标题', props: { text: '这是个标题', fontColor: '#262626', align: AlignType.CENTER } as TitleProps };
       case COMPONENT_TYPE.CONTENT:
-        return { ...commonProps, name: '内容', props: { text: '默认内容信息', fontColor: '#666', fontSize: ContentFontSize.REGULAR, fontWeight: 'normal', align: AlignType.LEFT, maxLines: 0 } as ContentProps };
+        return { ...commonProps, name: '内容', props: { text: '这是内容', fontColor: '#262626', fontSize: ContentFontSize.REGULAR, fontWeight: 'normal', align: TextAlignType.LEFT, maxLines: 4 } as ContentProps };
       case COMPONENT_TYPE.DIVIDER:
-        return { ...commonProps, name: '分割线', props: { color: '#e0e0e0', paddingTop: '10px', paddingBottom: '10px', lineType: DividerLineType.SOLID } as DividerProps };
+        return { ...commonProps, name: '分割线', props: { color: '#262626', paddingTop: '8px', paddingBottom: '8px', lineType: DividerLineType.DASHED } as DividerProps };
       case COMPONENT_TYPE.IMAGE:
-        return { ...commonProps, name: '图片', props: { src: '', widthMode: ImageWidthMode.FIXED, fixedWidthSize: ImageFixedWidthSize.CUSTOM, customWidth: 40, customHeight: 40, borderRadius: '0px', align: AlignType.CENTER } as ImageProps };
+        return { ...commonProps, name: '图片', props: { src: '', widthMode: ImageWidthMode.FIXED, fixedWidthSize: ImageFixedWidthSize.CUSTOM, customWidth: 40, customHeight: 40 } as ImageProps };
       case COMPONENT_TYPE.BUTTON:
-        return { ...commonProps, name: '按钮', props: { buttonText: '点击按钮', buttonType: ButtonType.PRIMARY, widthMode: ButtonWidthMode.AUTO, width: 0, align: AlignType.CENTER, link: '' } as ButtonProps };
+        return { ...commonProps, name: '按钮', props: { buttonText: '这是按钮', buttonType: ButtonType.PRIMARY, widthMode: ButtonWidthMode.AUTO, width: 0, align: AlignType.CENTER, disabledAfterTrigger: false, actionType: ButtonActionType.CALL_PLUGIN } as ButtonProps };
       default:
-        console.warn(`Unknown component type: ${type}`);
+        console.warn(`未知类型: ${type}`);
         return null;
     }
   }

@@ -1,38 +1,40 @@
 <div class="background-config-container p-4 rounded-lg shadow-sm">
   <!-- 背景标题 -->
-  <div class="mb-4 text-lg font-semibold text-gray-800">背景</div>
+  <div class="config-label">背景</div>
 
   <!-- 卡片式 Radio 组 -->
-  <nz-radio-group 
-    [(ngModel)]="selectedOption" 
-    (ngModelChange)="onOptionChange($event)"
-    nzButtonStyle="solid" 
-    class="flex justify-center mb-6" 
-  >
-    <label nz-radio-button nzValue="transparent" class="flex-1 text-center py-2 rounded-l-md">透明</label>
-    <label nz-radio-button nzValue="color" class="flex-1 text-center py-2 rounded-r-md">颜色</label>
-  </nz-radio-group>
+  <div class="config-container">
+    <nz-radio-group 
+      [(ngModel)]="selectedOption" 
+      (ngModelChange)="onOptionChange($event)"
+      nzButtonStyle="solid" 
+      class="flex justify-center mb-6" 
+    >
+      <label nz-radio-button nzValue="transparent" class="flex-1 text-center py-2 rounded-l-md">透明</label>
+      <label nz-radio-button nzValue="color" class="flex-1 text-center py-2 rounded-r-md">颜色</label>
+    </nz-radio-group>
+  </div>
 
   <ng-container *ngIf="selectedOption === 'color'">
-    <div class="flex items-center justify-center">
+    <div class="config-container">
+      <div class="config-label">请选择颜色</div>
       <app-color-picker [currentColor]="currentColor" (colorChange)="onColorChange($event)"></app-color-picker>
     </div>
   </ng-container>
 
   <!-- 根据 selectedOption 动态显示内容 -->
-  <ng-container>
-    <div class="mb-4 flex items-center">
-      <span class="w-24 text-gray-700 mr-2">行间距</span>
-      <nz-select [(ngModel)]="rowGap" (ngModelChange)="onLineHeightChange($event)" class="flex-1 rounded-md" name="lineHeight">
-        <nz-option *ngFor="let option of spacingOptions" [nzValue]="option" [nzLabel]="option + 'px'"></nz-option>
-      </nz-select>
-    </div>
 
-    <div class="flex items-center">
-      <span class="w-24 text-gray-700 mr-2">内边距</span>
-      <nz-select [(ngModel)]="currentPadding" (ngModelChange)="onPaddingChange($event)" class="flex-1 rounded-md" name="padding">
-        <nz-option *ngFor="let option of spacingOptions" [nzValue]="option" [nzLabel]="option + 'px'"></nz-option>
-      </nz-select>
-    </div>
-  </ng-container>
+  <div class="config-label">行间距</div>
+  <div class="config-container">
+    <nz-select [(ngModel)]="rowGap" (ngModelChange)="onLineHeightChange($event)" class="flex-1 rounded-md" name="lineHeight">
+      <nz-option *ngFor="let option of spacingOptions" [nzValue]="option.value" [nzLabel]="option.label"></nz-option>
+    </nz-select>
+  </div>
+
+  <div class="config-label">内边距</div>
+  <div class="config-container">
+    <nz-select [(ngModel)]="currentPadding" (ngModelChange)="onPaddingChange($event)" class="flex-1 rounded-md" name="padding">
+      <nz-option *ngFor="let option of spacingOptions" [nzValue]="option.value" [nzLabel]="option.label"></nz-option>
+    </nz-select>
+  </div>
 </div>

@@ -1,62 +1,59 @@
 <div class="background-config-container p-4 rounded-lg shadow-sm">
 
+  <div class="config-label">颜色</div>
 
-  <div class="mb-4 text-lg font-semibold text-gray-800">颜色</div>
+  <div class="config-container">
+    <app-color-picker [currentColor]="fontColor" (colorChange)="onColorChange($event)"></app-color-picker>
+  </div>
 
-  <ng-container>
-    <div class="flex items-center justify-center">
-      <app-color-picker [currentColor]="fontColor" (colorChange)="onColorChange($event)"></app-color-picker>
-    </div>
-  </ng-container>
+  <div class="config-label">字体</div>
 
-  <div class="mb-4 text-lg font-semibold text-gray-800">字体</div>
+  <div class="config-container">
+    <nz-radio-group 
+      [(ngModel)]="fontWeight" 
+      (ngModelChange)="onFontWeightChange($event)"
+      nzButtonStyle="solid" 
+      class="flex justify-center mb-6" 
+    >
+      <label nz-radio-button nzValue="normal" class="flex-1 text-center py-2 rounded-l-md">常规</label>
+      <label nz-radio-button nzValue="bold" class="flex-1 text-center py-2 rounded-r-md">加粗</label>
+    </nz-radio-group>
+  </div>
 
-  <nz-radio-group 
-    [(ngModel)]="fontWeight" 
-    (ngModelChange)="onFontWeightChange($event)"
-    nzButtonStyle="solid" 
-    class="flex justify-center mb-6" 
-  >
-    <label nz-radio-button nzValue="normal" class="flex-1 text-center py-2 rounded-l-md">常规</label>
-    <label nz-radio-button nzValue="bold" class="flex-1 text-center py-2 rounded-r-md">加粗</label>
-  </nz-radio-group>
+  <div class="config-label">字体大小</div>
 
-  <div class="mb-4 text-lg font-semibold text-gray-800">字体大小</div>
-
-  <ng-container>
-    <div class="mb-4 flex items-center">
-      <nz-select [(ngModel)]="fontSize" (ngModelChange)="onFontSizeChange($event)" class="flex-1 rounded-md">
-        <nz-option *ngFor="let option of sizeOptions" [nzValue]="option.value" [nzLabel]="option.label"></nz-option>
-      </nz-select>
-    </div>
-  </ng-container>
+  <div class="config-container">
+    <nz-select [(ngModel)]="fontSize" (ngModelChange)="onFontSizeChange($event)" class="flex-1 rounded-md">
+      <nz-option *ngFor="let option of sizeOptions" [nzValue]="option.value" [nzLabel]="option.label"></nz-option>
+    </nz-select>
+  </div>
 
   <!-- 卡片式 Radio 组 -->
 
-  <div class="mb-4 text-lg font-semibold text-gray-800">对齐</div>
+  <div class="config-label">对齐</div>
 
-  <nz-radio-group 
-    [(ngModel)]="align" 
-    (ngModelChange)="onAlignChange($event)"
-    nzButtonStyle="solid" 
-    class="flex justify-center mb-6" 
-  >
-    <label nz-radio-button nzValue="auto" class="flex-1 text-center py-2 rounded-l-md">左对齐</label>
-    <label nz-radio-button nzValue="stretch" class="flex-1 text-center py-2 rounded-r-md">中间对齐</label>
-    <label nz-radio-button nzValue="fixed" class="flex-1 text-center py-2 rounded-r-md">右对齐</label>
-  </nz-radio-group>
+  <div class="config-container">
+    <nz-radio-group 
+      [(ngModel)]="align" 
+      (ngModelChange)="onAlignChange($event)"
+      nzButtonStyle="solid" 
+      class="flex justify-center mb-6" 
+    >
+      <label nz-radio-button nzValue="left" class="flex-1 text-center py-2 rounded-l-md">左对齐</label>
+      <label nz-radio-button nzValue="center" class="flex-1 text-center py-2 rounded-r-md">中间对齐</label>
+      <label nz-radio-button nzValue="right" class="flex-1 text-center py-2 rounded-r-md">右对齐</label>
+    </nz-radio-group>
+  </div>
 
-  <div class="mb-4 text-lg font-semibold text-gray-800">最大行数</div>
+  <div class="config-label">最大行数</div>
 
-  <ng-container>
-    <div class="mb-4 flex items-center">
-      <nz-input-number [(ngModel)]="maxLines" [nzMin]="1" [nzMax]="5" [nzStep]="1" (ngModelChange)="onMaxlinesChange($event)"></nz-input-number> 
-    </div>
-  </ng-container>
+  <div class="config-container">
+    <nz-input-number [(ngModel)]="maxLines" [nzMin]="1" [nzMax]="5" [nzStep]="1" (ngModelChange)="onMaxlinesChange($event)"></nz-input-number> 
+  </div>
 
-  <div class="mb-4 text-lg font-semibold text-gray-800">高级设置</div>
+  <div class="config-label-big">高级设置</div>
 
-  <div class="mb-4 text-lg font-semibold text-gray-800">循环渲染</div>
+  <div class="config-label">循环渲染</div>
 
   <nz-switch [(ngModel)]="loopRender"></nz-switch> 
 

@@ -30,7 +30,8 @@ export class ButtonConfigComponent implements OnInit {
   actionType: 'CALL_PLUGIN' | 'OPEN_URL' =  'CALL_PLUGIN'; // 按钮操作 
 
   // 下拉框选项
-  actionOptions: string[] = ['CALL_PLUGIN', 'OPEN_URL'];
+  actionOptions: { label: string, value: string }[] = [{ label: '调用插件', value: 'CALL_PLUGIN' }, { label: '打开URL', value: 'OPEN_URL' }];
+
   typeOptions: { label: string, value: string }[] = [
     { label: '主要按钮', value: 'primary' },
     { label: '次要按钮', value: 'default' },

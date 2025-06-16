@@ -1,5 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { ContentProps } from '../../../interface';
+import { ContentFontSize } from '../../../enum';
 
 @Component({
   selector: 'app-content-config',
@@ -32,9 +33,9 @@ export class ContentConfigComponent implements OnInit {
 
   // 下拉框选项
   sizeOptions: { label: string, value: string }[] = [
-    { label: '小号', value: '12px' },
-    { label: '常规', value: '14px' },
-    { label: '大号', value: '16px' },
+    { label: '小号', value: ContentFontSize.SMALL },
+    { label: '常规', value: ContentFontSize.REGULAR },
+    { label: '大号', value: ContentFontSize.LARGE },
   ];
 
   constructor() { }

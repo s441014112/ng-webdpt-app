@@ -1,5 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { SlotProps } from '../../../interface';
+import { PaddingSize } from '../../../enum';
 
 
 @Component({
@@ -21,10 +22,15 @@ export class SlotConfigComponent implements OnInit {
   // 内边距的当前值
   currentPadding: string = '0';
   // 垂直对齐
-  alignItems: string = '#ffffff';
+  alignItems: string = '';
 
   // 下拉框选项，从 0px 到 8px
-  spacingOptions: string[] = Array.from({ length: 9 }, (_, i) => i + ''); // [0, 1, ..., 8]
+  spacingOptions: { label: string, value: string }[] = [
+    { label: '2px', value: PaddingSize.NONE },
+    { label: '4px', value: PaddingSize.SMALL },
+    { label: '6px', value: PaddingSize.MEDIUM },
+    { label: '8px', value: PaddingSize.LARGE },
+  ]
 
   constructor() { }
 

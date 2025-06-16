@@ -144,19 +144,19 @@
       
             <app-image-config
               *ngSwitchCase="'IMAGE'"
-              [properties]="selectedComponent.props"
+              [initialImageConfig]="selectedComponent.props"
               (configChange)="handleImageConfigChange($event)"
             ></app-image-config>
 
             <app-button-config
               *ngSwitchCase="'BUTTON'"
-              [properties]="selectedComponent.props"
+              [initialButtonConfig]="selectedComponent.props"
               (configChange)="handleButtonConfigChange($event)"
             ></app-button-config>
 
             <app-content-config
               *ngSwitchCase="'CONTENT'"
-              [properties]="selectedComponent.props"
+              [initialContentConfig]="selectedComponent.props"
               (configChange)="handleButtonConfigChange($event)"
             ></app-content-config>
 
@@ -168,7 +168,7 @@
 
             <app-divider-config
               *ngSwitchCase="'DIVIDER'"
-              [properties]="selectedComponent.props"
+              [initialDividerConfig]="selectedComponent.props"
               (configChange)="handleButtonConfigChange($event)"
             ></app-divider-config>
       

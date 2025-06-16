@@ -15,9 +15,17 @@ export enum COMPONENT_TYPE {
 
 // 内容组件字体大小
 export enum ContentFontSize {
-  SMALL = 'small', // 小号
-  REGULAR = 'default', // 常规
-  LARGE = 'large', // 大号
+  SMALL = '12px', // 小号
+  REGULAR = '14px', // 常规
+  LARGE = '16px', // 大号
+}
+
+// 内边距枚举值
+export enum PaddingSize {
+  NONE = '2px', // 无
+  SMALL = '4px', // 小
+  MEDIUM = '6px', // 中
+  LARGE = '8px', // 大
 }
 
 // 分割线线型
@@ -64,7 +72,7 @@ export enum ButtonActionType {
   OPEN_URL = 'OPEN_URL', // 打开URL
 }
 
-// 对齐方式 (垂直/水平)
+// 容器对齐方式 (垂直/水平)
 export enum AlignType {
   TOP = 'flex-start',
   MIDDLE = 'center',
@@ -72,4 +80,17 @@ export enum AlignType {
   LEFT = 'flex-start',
   CENTER = 'center',
   RIGHT = 'flex-end',
+}
+
+// 文本对齐方式
+export enum TextAlignType {
+  LEFT = 'left',
+  CENTER = 'center',
+  RIGHT = 'right',
+}
+
+// 背景模式
+export enum BackgroundMode {
+  TRANSPARENT = 'transparent', // 透明
+  COLOR = 'color', // 颜色
 }

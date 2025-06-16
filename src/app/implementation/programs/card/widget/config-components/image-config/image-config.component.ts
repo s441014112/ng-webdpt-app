@@ -27,13 +27,6 @@ export class ImageConfigComponent implements OnInit {
   customHeight: number = 0;
   loopRender: boolean = false;
 
-  // 下拉框选项
-  typeOptions: { label: string, value: string }[] = [
-    { label: '实线', value: 'solid' },
-    { label: '虚线', value: 'dashed' },
-    { label: '点线', value: 'dotted' },
-  ];
-
   constructor() { }
 
   ngOnInit(): void {

@@ -1,12 +1,9 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 
 import { RootProps } from '../../../interface';
+import { BackgroundMode, PaddingSize } from '../../../enum';
 
 // 定义组件接收和发出的属性接口
-export interface BackgroundProperties extends RootProps {
-  type: 'transparent' | 'color';
-}
-
 @Component({
   selector: 'app-background-config',
   templateUrl: './background-config.component.html',
@@ -14,29 +11,34 @@ export interface BackgroundProperties extends RootProps {
 })
 export class BackgroundConfigComponent implements OnInit {
   // 接收父组件传入的属性集合
-  @Input() properties: BackgroundProperties = { type: 'transparent', rowGap: '', padding: '', backgroundColor: '#ffffff' };
+  @Input() properties: RootProps = { backgroundMode: BackgroundMode.TRANSPARENT, rowGap: '', padding: '', backgroundColor: '#ffffff' };
   // 向父组件发出属性变化的事件
-  @Output() propertiesChange = new EventEmitter<BackgroundProperties>();
+  @Output() propertiesChange = new EventEmitter<RootProps>();
 
   // Radio 组的当前选中项
-  selectedOption: 'transparent' | 'color' = 'transparent';
+  selectedOption: string = BackgroundMode.TRANSPARENT;
 
   // 行间距的当前值
   rowGap: string = '';
   // 内边距的当前值
   currentPadding: string = '';
   // 颜色的当前值
-  currentColor: string = '#ffffff';
+  currentColor: string = '';
 
   // 下拉框选项，从 0px 到 8px
-  spacingOptions: string[] = Array.from({ length: 9 }, (_, i) => i + ''); // [0, 1, ..., 8]
+  spacingOptions: { label: string, value: string }[] = [
+    { label: '无', value: PaddingSize.NONE },
+    { label: '小', value: PaddingSize.SMALL },
+    { label: '中', value: PaddingSize.MEDIUM },
+    { label: '大', value: PaddingSize.LARGE },
+  ]
 
   constructor() { }
 
   ngOnInit(): void {
     // 根据传入的 properties 初始化组件状态
     if (this.properties) {
-      this.selectedOption = this.properties.type;
+      this.selectedOption = this.properties.backgroundMode;
       this.rowGap = this.properties.rowGap ?? '';
       this.currentPadding = this.properties.padding ?? '';
       this.currentColor = this.properties.backgroundColor ?? '#ffffff';
@@ -49,7 +51,7 @@ export class BackgroundConfigComponent implements OnInit {
    * 处理 Radio 选项变化
    * @param value 选中的值 ('transparent' 或 'color')
    */
-  onOptionChange(value: 'transparent' | 'color'): void {
+  onOptionChange(value: string): void {
     this.selectedOption = value;
     this.emitProperties(); // 每次选择变化都发出新的属性集合
   }
@@ -85,8 +87,8 @@ export class BackgroundConfigComponent implements OnInit {
    * 组合当前状态并发出属性集合
    */
   private emitProperties(): void {
-    const updatedProperties: BackgroundProperties = {
-      type: this.selectedOption,
+    const updatedProperties: RootProps = {
+      backgroundMode: this.selectedOption,
       rowGap: this.rowGap,
       padding: this.currentPadding,
     };

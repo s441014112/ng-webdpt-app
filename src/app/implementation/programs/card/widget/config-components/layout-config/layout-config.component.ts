@@ -43,10 +43,18 @@ export class LayoutConfigComponent implements OnInit {
   currentRowGap: string = '';
   currentPadding: string = '';
   currentBorderRadius: string = '';
-  currentColor: string = '#ffffff';
+  currentColor: string = '';
 
-  // 下拉框选项，从 0px 到 8px (新增圆角选项，可以根据需要调整范围)
-  spacingOptions: string[] = Array.from({ length: 9 }, (_, i) => i + ''); // [0, 1, ..., 8]
+  // 下拉框选项，从 0px 到 8px
+  spacingOptions: { label: string, value: string }[] = [
+    { label: '0px', value: '0px' },
+    { label: '4px', value: '4px' },
+    { label: '8px', value: '8px' },
+    { label: '12px', value: '12px' },
+    { label: '16px', value: '16px' },
+    { label: '20px', value: '20px' },
+    { label: '24px', value: '24px' },
+  ]
 
   constructor() { }
 

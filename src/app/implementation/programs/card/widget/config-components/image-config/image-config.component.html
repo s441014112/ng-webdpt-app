@@ -1,44 +1,50 @@
 <div class="background-config-container p-4 rounded-lg shadow-sm">
   <!-- 卡片式 Radio 组 -->
 
-  <div class="mb-4 text-lg font-semibold text-gray-800">样式</div>
+  <div class="config-label">样式</div>
 
-  <nz-radio-group 
-    [(ngModel)]="widthMode" 
-    (ngModelChange)="onWidthModeChange($event)"
-    nzButtonStyle="solid" 
-    class="flex justify-center mb-6" 
-  >
-    <label nz-radio-button nzValue="full" class="flex-1 text-center py-2 rounded-l-md">固定宽度</label>
-    <label nz-radio-button nzValue="fixed" class="flex-1 text-center py-2 rounded-r-md">宽度铺满</label>
-  </nz-radio-group>
+  <div class="config-container">
+    <nz-radio-group 
+      [(ngModel)]="widthMode" 
+      (ngModelChange)="onWidthModeChange($event)"
+      nzButtonStyle="solid" 
+      class="flex justify-center mb-6" 
+    >
+      <label nz-radio-button nzValue="full" class="flex-1 text-center py-2 rounded-l-md">固定宽度</label>
+      <label nz-radio-button nzValue="fixed" class="flex-1 text-center py-2 rounded-r-md">宽度铺满</label>
+    </nz-radio-group>
+  </div>
 
-  <div class="mb-4 text-lg font-semibold text-gray-800">尺寸</div>
+  <div class="config-label">尺寸</div>
 
-  <nz-radio-group 
-    [(ngModel)]="fixedWidthSize" 
-    (ngModelChange)="onSizeChange($event)"
-    nzButtonStyle="solid" 
-    class="flex justify-center mb-6" 
-  >
-    <label nz-radio-button nzValue="large" class="flex-1 text-center py-2 rounded-l-md">大</label>
-    <label nz-radio-button nzValue="normal" class="flex-1 text-center py-2 rounded-r-md">中</label>
-    <label nz-radio-button nzValue="small" class="flex-1 text-center py-2 rounded-r-md">小</label>
-    <label nz-radio-button nzValue="custom" class="flex-1 text-center py-2 rounded-r-md">自定义</label>
-  </nz-radio-group>
+  <div class="config-container">
+    <nz-radio-group 
+      [(ngModel)]="fixedWidthSize" 
+      (ngModelChange)="onSizeChange($event)"
+      nzButtonStyle="solid" 
+      class="flex justify-center mb-6" 
+    >
+      <label nz-radio-button nzValue="large" class="flex-1 text-center py-2 rounded-l-md">大</label>
+      <label nz-radio-button nzValue="normal" class="flex-1 text-center py-2 rounded-r-md">中</label>
+      <label nz-radio-button nzValue="small" class="flex-1 text-center py-2 rounded-r-md">小</label>
+      <label nz-radio-button nzValue="custom" class="flex-1 text-center py-2 rounded-r-md">自定义</label>
+    </nz-radio-group>
+  </div> 
 
   <ng-container *ngIf="fixedWidthSize == 'custom'">
-    <div class="mb-4 flex items-center">
-      <span>宽度</span>
+    <div class="config-label">
+      <span>宽度  </span>
       <nz-input-number [(ngModel)]="customWidth" [nzMin]="1" [nzMax]="420" [nzStep]="1" (ngModelChange)="onWidthChange($event)"></nz-input-number> 
     </div>
-    <div class="mb-4 flex items-center">
-      <span>高度</span>
+    <div class="config-label">
+      <span>高度  </span>
       <nz-input-number [(ngModel)]="customHeight" [nzMin]="1" [nzMax]="800" [nzStep]="1" (ngModelChange)="onHeightChange($event)"></nz-input-number> 
     </div>
   </ng-container>
 
-  <div class="mb-4 text-lg font-semibold text-gray-800">循环渲染</div>
+  <div class="config-label">循环渲染</div>
 
-  <nz-switch [(ngModel)]="loopRender"></nz-switch> 
+  <div class="config-container">
+    <nz-switch [(ngModel)]="loopRender"></nz-switch> 
+  </div>
 </div>

@@ -1,6 +1,5 @@
 .horizontal-component {
   box-sizing: border-box;
-  border: 1px dashed transparent;
   transition: border 0.2s ease-in-out;
   position: relative;
 
@@ -9,11 +8,11 @@
   overflow-x: scroll;
 
   &:hover {
-    border-color: #4E6FFF; // 鼠标悬停时显示虚线边框
+    border: 1px dashed #4E6FFF;
   }
 
   &.selected {
-    border: 1px dashed #4E6FFF; // 选中时显示边框
+    border: 2px solid #4E6FFF;
   }
 
 }

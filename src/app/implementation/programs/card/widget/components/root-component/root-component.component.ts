@@ -3,7 +3,6 @@ import  { Input, Output, EventEmitter } from '@angular/core';
 import { CdkDragDrop } from '@angular/cdk/drag-drop'; // 导入 CdkDragDrop 类型
 
 import { ComponentNodeModel, RootProps } from '../../../interface/index';
-import { COMPONENT_TYPE } from '../../../enum/index';
 
 @Component({
   selector: 'app-root-component',
