@@ -183,4 +183,13 @@
     </nz-sider>
   </nz-layout>
 
+  <div 
+    *ngIf="showMenu"
+    class="context-menu" [ngStyle]="{'top': menuPosition.top, 'left': menuPosition.left}"
+    (menuAction)="onMenuAction($event)"
+  >
+    <img class="component-icon" src="assets/template/menu-add.png" alt="copy" (click)="onCopyComponent(selectedComponent)" />
+    <img class="component-icon" src="assets/template/menu-delete.png" alt="delete" (click)="onDeleteComponent(selectedComponent.id)" />
+  </div>
+
 </nz-layout>

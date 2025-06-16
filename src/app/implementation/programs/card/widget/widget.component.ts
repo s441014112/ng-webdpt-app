@@ -58,6 +58,13 @@ export class WidgetComponent implements OnInit {
   // 用于在画布中的所有可拖拽区域之间建立连接
   allCanvasDropListIds: string[] = ['canvas-root-drop-list',"container-component-list", "primitive-component-list"];
 
+  showMenu = false;
+  menuPosition = { top: '0px', left: '0px' };
+  menuItems: { label: string, action: string }[] = [
+    {label: '复制', action: 'copy'},
+    {label: '删除', action: 'delete'},
+  ];
+
 
   constructor(private route: ActivatedRoute) { }
 
@@ -75,6 +82,23 @@ export class WidgetComponent implements OnInit {
   onSelectComponent(component: ComponentNodeModel): void {
     this.selectedComponent = component;
     console.log('Selected Component:', this.selectedComponent);
+
+    // Root组件不能有右键菜单
+
+    if (this.selectedComponent.type === COMPONENT_TYPE.ROOT) {
+      return;
+    }
+
+    // 设置菜单位置为点击组件的右上角
+    const target = document.getElementById(this.selectedComponent.id) as HTMLElement;
+    const rect = target.getBoundingClientRect();
+    
+    this.menuPosition = {
+      top: `${rect.top - 40}px`,
+      left: `${rect.right - 70}px`
+    };
+    
+    this.showMenu = true;
   }
 
   // 保存模板
@@ -135,6 +159,9 @@ export class WidgetComponent implements OnInit {
 
   // 删除组件
   onDeleteComponent(componentId: string): void {
+
+    this.showMenu = false;
+
     if (!this.rootNode) return;
 
     const deleteRecursive = (nodes: ComponentNodeModel[] | undefined, idToDelete: string): ComponentNodeModel[] | undefined => {
@@ -151,16 +178,31 @@ export class WidgetComponent implements OnInit {
     };
 
     this.rootNode.children = deleteRecursive(this.rootNode.children, componentId);
+
     if (this.selectedComponent?.id === componentId) {
       this.selectedComponent = null;
     }
+
     this.rootNode = { ...this.rootNode! }; // 触发变更检测
     this.updateAllCanvasDropListIds(this.rootNode); // 更新所有可拖拽区域的ID
+
+    // 如果画布上元素删除完了，把画布清空
+    if (!this.rootNode.children?.length) {
+      this.rootNode = null;
+    }
   }
 
   // 复制组件
   onCopyComponent(componentToCopy: ComponentNodeModel): void {
+    this.showMenu = false;
+
     if (!this.rootNode) return;
+
+    // Title节点不可复制
+    if (this.selectedComponent.type === COMPONENT_TYPE.TITLE) {
+      alert('画布中已存在标题组件，一个画布只能有一个标题组件。');
+      return;
+    }
 
     // 深度复制组件节点
     const copiedComponent = JSON.parse(JSON.stringify(componentToCopy));
