@@ -8,7 +8,11 @@ import { ComponentNodeModel, ContentProps } from '../../../interface/index';
 @Component({
   selector: 'app-content-component',
   templateUrl: './content-component.component.html',
-  styleUrls: ['./content-component.component.less']
+  styleUrls: ['./content-component.component.less'],
+  host: {
+    '[style.display]': 'flex',
+    '[style.width]': '"100%"',
+  }
 })
 export class ContentComponentComponent implements OnInit {
 

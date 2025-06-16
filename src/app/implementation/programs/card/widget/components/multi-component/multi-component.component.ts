@@ -11,7 +11,11 @@ import { COMPONENT_TYPE } from '../../../enum/index';
 @Component({
   selector: 'app-multi-component',
   templateUrl: './multi-component.component.html',
-  styleUrls: ['./multi-component.component.less']
+  styleUrls: ['./multi-component.component.less'],
+  host: {
+    '[style.display]': 'flex',
+    '[style.width]': '"100%"',
+  }
 })
 export class MultiComponentComponent implements OnInit {
 

@@ -5,7 +5,11 @@ import { CdkDragDrop } from '@angular/cdk/drag-drop'; // 导入 CdkDragDrop 类�
 @Component({
   selector: 'app-slot-component',
   templateUrl: './slot-component.component.html',
-  styleUrls: ['./slot-component.component.less']
+  styleUrls: ['./slot-component.component.less'],
+  host: {
+    '[style.display]': 'flex',
+    '[style.width]': '"100%"',
+  }
 })
 export class SlotComponentComponent implements OnInit {
 

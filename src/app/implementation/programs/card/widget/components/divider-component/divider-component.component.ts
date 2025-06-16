@@ -9,7 +9,11 @@ import { ComponentNodeModel, DividerProps } from '../../../interface/index';
 @Component({
   selector: 'app-divider-component',
   templateUrl: './divider-component.component.html',
-  styleUrls: ['./divider-component.component.less']
+  styleUrls: ['./divider-component.component.less'],
+  host: {
+    '[style.display]': 'flex',
+    '[style.width]': '"100%"',
+  }
 })
 export class DividerComponentComponent implements OnInit {
 

@@ -10,7 +10,11 @@ import { COMPONENT_TYPE } from '../../../enum/index';
 @Component({
   selector: 'app-single-column',
   templateUrl: './single-column.component.html',
-  styleUrls: ['./single-column.component.less']
+  styleUrls: ['./single-column.component.less'],
+  host: {
+    '[style.display]': 'flex',
+    '[style.width]': '"100%"',
+  }
 })
 export class SingleColumnComponent implements OnInit {
 

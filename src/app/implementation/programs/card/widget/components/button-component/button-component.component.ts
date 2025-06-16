@@ -9,7 +9,11 @@ import { ButtonWidthMode } from '../../../enum';
 @Component({
   selector: 'app-button-component',
   templateUrl: './button-component.component.html',
-  styleUrls: ['./button-component.component.less']
+  styleUrls: ['./button-component.component.less'],
+  host: {
+    '[style.display]': 'flex',
+    '[style.width]': '"100%"',
+  }
 })
 export class ButtonComponentComponent implements OnInit {
 

@@ -10,7 +10,11 @@ import { COMPONENT_TYPE } from '../../../enum/index'; // 导入 COMPONENT_TYPE �
 @Component({
   selector: 'app-list-component',
   templateUrl: './list-component.component.html',
-  styleUrls: ['./list-component.component.less']
+  styleUrls: ['./list-component.component.less'],
+  host: {
+    '[style.display]': 'flex',
+    '[style.width]': '"100%"',
+  }
 })
 export class ListComponentComponent implements OnInit {
 

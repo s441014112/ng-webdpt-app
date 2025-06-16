@@ -8,7 +8,11 @@ import { ComponentNodeModel, TitleProps } from '../../../interface/index';
 @Component({
   selector: 'app-title-component',
   templateUrl: './title-component.component.html',
-  styleUrls: ['./title-component.component.less']
+  styleUrls: ['./title-component.component.less'],
+  host: {
+    '[style.display]': 'flex',
+    '[style.width]': '"100%"',
+  }
 })
 export class TitleComponentComponent implements OnInit {
 

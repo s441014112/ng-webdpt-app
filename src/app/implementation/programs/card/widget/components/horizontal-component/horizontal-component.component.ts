@@ -11,7 +11,11 @@ import { COMPONENT_TYPE } from '../../../enum/index';
 @Component({
   selector: 'app-horizontal-component',
   templateUrl: './horizontal-component.component.html',
-  styleUrls: ['./horizontal-component.component.less']
+  styleUrls: ['./horizontal-component.component.less'],
+  host: {
+    '[style.display]': 'flex',
+    '[style.width]': '"100%"',
+  }
 })
 export class HorizontalComponentComponent implements OnInit {
 
