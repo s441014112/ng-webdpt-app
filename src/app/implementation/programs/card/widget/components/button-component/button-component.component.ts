@@ -12,7 +12,6 @@ import { ButtonWidthMode } from '../../../enum';
   styleUrls: ['./button-component.component.less'],
   host: {
     '[style.display]': 'flex',
-    '[style.width]': '"100%"',
   }
 })
 export class ButtonComponentComponent implements OnInit {

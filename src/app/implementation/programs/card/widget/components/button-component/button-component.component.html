@@ -1,5 +1,8 @@
 <div class="button-component-wrapper"
   [ngClass]="{ 'selected': isSelected(node) }"
+  [ngStyle]="{
+    'width': buttonProps.widthMode  === 'auto' ? 'fit-content' : (buttonProps.widthMode  === 'fixed' ? calculatedWidth : '100%')
+  }"
   (click)="onComponentClick($event, node)"
   cdkDrag
   [id]="node!.id"

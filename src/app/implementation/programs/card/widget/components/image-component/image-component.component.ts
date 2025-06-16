@@ -11,6 +11,7 @@ import { ImageFixedWidthSize, ImageWidthMode } from '../../../enum';
   templateUrl: './image-component.component.html',
   styleUrls: ['./image-component.component.less']
 })
+
 export class ImageComponentComponent implements OnInit {
 
   @Input() node!: ComponentNodeModel;
