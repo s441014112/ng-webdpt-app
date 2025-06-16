@@ -48,7 +48,7 @@ export class ButtonComponentComponent implements OnInit {
     if (props.widthMode === ButtonWidthMode.STRETCH) {
       this.calculatedWidth = '100%';
     } else if (props.widthMode === ButtonWidthMode.FIXED) {
-      this.calculatedWidth = props.width ? Math.min(props.width, 420) : 'auto'; // 最大宽度 420px
+      this.calculatedWidth = props.width ? Math.min(props.width, 420) + 'px' : 'auto'; // 最大宽度 420px
     } else {
       this.calculatedWidth = 'auto'; // 自适应
     }

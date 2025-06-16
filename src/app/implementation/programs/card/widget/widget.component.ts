@@ -560,7 +560,7 @@ export class WidgetComponent implements OnInit {
       case COMPONENT_TYPE.DIVIDER:
         return { ...commonProps, name: '分割线', props: { color: '#262626', paddingTop: '8px', paddingBottom: '8px', lineType: DividerLineType.DASHED } as DividerProps };
       case COMPONENT_TYPE.IMAGE:
-        return { ...commonProps, name: '图片', props: { src: '', widthMode: ImageWidthMode.FIXED, fixedWidthSize: ImageFixedWidthSize.CUSTOM, customWidth: 40, customHeight: 40 } as ImageProps };
+        return { ...commonProps, name: '图片', props: { src: 'assets/template/IMAGE.png', widthMode: ImageWidthMode.FIXED, fixedWidthSize: ImageFixedWidthSize.CUSTOM, customWidth: 60, customHeight: 60 } as ImageProps };
       case COMPONENT_TYPE.BUTTON:
         return { ...commonProps, name: '按钮', props: { buttonText: '这是按钮', buttonType: ButtonType.PRIMARY, widthMode: ButtonWidthMode.AUTO, width: 0, align: AlignType.CENTER, disabledAfterTrigger: false, actionType: ButtonActionType.CALL_PLUGIN } as ButtonProps };
       default:
@@ -699,7 +699,139 @@ export class WidgetComponent implements OnInit {
     return false; // 默认不允许
   }
 
-  handleColorSelection(color: Color): void {
-    console.log('在父组件中接收到选择的颜色:', color);
+  /**
+   * @param rootNode 树的根节点
+   * @param nodeIdToUpdate 要更新的节点ID
+   * @param newProps 新的props对象
+   * @returns 更新后的新树
+   */
+  updateNodeProps(newProps: any, nodeIdToUpdate: string): ComponentNodeModel {
+
+    // 深度克隆原始树的根节点，以避免直接修改原始数据
+    const updatedRootNode = this.deepCloneNode(this.rootNode);
+
+    let nodeFound = false;
+
+    // 内部递归函数，用于遍历并更新节点
+    const traverseAndUpdate = (currentNode: ComponentNodeModel) => {
+      // 检查当前节点是否是目标节点
+      if (currentNode.id === nodeIdToUpdate) {
+        // 直接更新props
+        currentNode.props = newProps;
+        nodeFound = true;
+        return;
+      }
+
+      // 如果当前节点有子节点，则递归遍历子节点
+      if (currentNode.children && currentNode.children.length > 0) {
+        for (let i = 0; i < currentNode.children.length; i++) {
+          const childNode = currentNode.children[i];
+          traverseAndUpdate(childNode);
+          if (nodeFound) { // 如果在子节点中找到了，也可以提前返回
+            return;
+          }
+        }
+      }
+    };
+
+    traverseAndUpdate(updatedRootNode);
+
+    // 返回更新后的根节点
+    return updatedRootNode;
   }
+
+  /**
+   * 根据模式修改指定节点的子节点
+   * @param targetNodeId 要修改子节点的节点ID
+   * @param mode 子节点修改模式 (Add 或 RemoveAt)
+   * @param value 根据模式有不同含义：
+   * - 如果 mode 为 Add: value 是目标子节点总数量 (当原本数量不足时，会增补到此数量)
+   * - 如果 mode 为 Remove: value 是要删除的子节点的下标
+   * @returns 更新后的新树根节点
+   */
+  modifyNodeChildren(
+    value: number,
+    targetNodeId: string,
+    mode: 'add' | 'remove'
+  ): ComponentNodeModel {
+    // 深度克隆原始树的根节点，以避免直接修改原始数据
+    const updatedRootNode = this.deepCloneNode(this.rootNode);
+
+    let nodeFound = false;
+
+    // 内部递归函数，用于遍历并更新节点
+    const traverseAndModify = (currentNode: ComponentNodeModel) => {
+      // 检查当前节点是否是目标节点
+      if (currentNode.id === targetNodeId) {
+        nodeFound = true;
+
+        switch (mode) {
+          case 'add':
+            const currentChildrenCount = currentNode.children.length;
+            const targetTotalCount = value; // 此时 value 是目标总数量
+
+            if (currentChildrenCount < targetTotalCount) {
+              const nodesToAdd = targetTotalCount - currentChildrenCount;
+              for (let i = 0; i < nodesToAdd; i++) {
+                currentNode.children.push(this.createComponentNode(COMPONENT_TYPE.SLOT));
+              }
+            } else if (currentChildrenCount > targetTotalCount) {
+              // 如果目标总数小于当前数量，则截断
+              currentNode.children = currentNode.children.slice(0, targetTotalCount);
+            }
+            break;
+
+          case 'remove':
+            const indexToRemove = value; // 此时 value 是要删除的下标
+
+            if (indexToRemove >= 0 && indexToRemove < currentNode.children.length) {
+              // 使用 splice 删除指定下标的元素
+              currentNode.children.splice(indexToRemove, 1);
+            } else {
+              console.warn(`尝试删除${targetNodeId}.子节点`);
+            }
+            break;
+
+          default:
+            console.warn(`删除失败: ${mode}`);
+            break;
+        }
+        return; // 找到并更新后即可停止当前分支的遍历
+      }
+
+      // 如果当前节点有子节点，则递归遍历子节点
+      if (currentNode.children && currentNode.children.length > 0) {
+        for (let i = 0; i < currentNode.children.length; i++) {
+          const childNode = currentNode.children[i];
+          traverseAndModify(childNode);
+          if (nodeFound) { // 如果在子节点中找到了，也可以提前返回
+            return;
+          }
+        }
+      }
+    };
+
+    traverseAndModify(updatedRootNode);
+    return updatedRootNode;
+  }
+
+
+  // 辅助函数：深度克隆单个节点及其子节点
+  private deepCloneNode(node: ComponentNodeModel): ComponentNodeModel {
+    return {
+      ...node,
+      props: { ...node.props }, // 确保props也是深拷贝
+      children: node.children ? node.children.map(child => this.deepCloneNode(child)) : []
+    };
+  }
+
+  upadteProps(newProps: any, nodeIdToUpdate: string) :void {
+    this.rootNode = this.updateNodeProps(newProps, nodeIdToUpdate);
+    this.updateAllCanvasDropListIds(this.rootNode);
+  }
+
+  updateLayoutSlot(props: { value: number, mode: 'add' | 'remove' }, nodeIdToUpdate: string) :void { 
+    this.rootNode = this.modifyNodeChildren(props.value, nodeIdToUpdate, props.mode);
+    this.updateAllCanvasDropListIds(this.rootNode);
+  } 
 }

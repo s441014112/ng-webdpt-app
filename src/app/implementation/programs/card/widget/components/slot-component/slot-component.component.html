@@ -1,23 +1,26 @@
 <div class="slot-component-wrapper"
-     [ngStyle]="{
-       'padding': slotProps.padding,
-       'gap': slotProps.rowGap,
-       'justify-content': slotProps.justifyContent,
-       'align-items': slotProps.alignItems
-     }"
-     [ngClass]="{ 'selected': isSelected(node) }"
-     (click)="onComponentClick($event, node)"
-     cdkDrag
-     [id]="node!.id"
-     [cdkDragData]="node"
-     cdkDropList
-     [cdkDropListData]="node!.children"
-     [cdkDropListConnectedTo]="allCanvasDropListIds"
+    [ngStyle]="{
+      'gap': slotProps.rowGap,
+      'padding': slotProps.padding
+    }"
+    [ngClass]="{ 'selected': isSelected(node) }"
+    (click)="onComponentClick($event, node)"
+    cdkDrag
+    [id]="node!.id"
+    [cdkDragData]="node"
+    cdkDropList
+    [cdkDropListData]="node!.children"
+    [cdkDropListConnectedTo]="allCanvasDropListIds"
 >
 
   <ng-container *ngIf="node.children && node.children.length > 0;">
     <ng-container *ngFor="let childNode of node.children">
       <app-component-renderer
+        [ngStyle]="{
+          'justify-content': slotProps.justifyContent,
+          'align-items': slotProps.alignItems
+        }"
+        [style.display]="'flex'"
         [node]="childNode"
         [selectedComponentId]="selectedComponentId"
         (selectComponent)="selectComponent.emit($event)"

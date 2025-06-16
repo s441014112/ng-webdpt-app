@@ -101,75 +101,79 @@
             <app-background-config
               *ngSwitchCase="'ROOT'"
               [properties]="selectedComponent.props"
-              (propertiesChange)="handleRootConfigChange($event)"
+              (propertiesChange)="upadteProps($event, selectedComponent.id)"
             ></app-background-config>
 
             <app-slot-config
               *ngSwitchCase="'SLOT'"
               [properties]="selectedComponent.props"
-              (configChange)="handleSlotConfigChange($event)"
+              (propertiesChange)="upadteProps($event, selectedComponent.id)"
             ></app-slot-config>
 
             <app-layout-config
               *ngSwitchCase="'SINGLE_COLUMN'"
-              [initialSlotCount]="1"
+              [initialSlotCount]="selectedComponent.children.length"
               [initialLayoutConfig]="selectedComponent.props"
               [maxSlots]="8"
-              (configChange)="handleLayoutConfigChange($event, selectedComponent.id)"
+              (configChange)="upadteProps($event, selectedComponent.id)"
+              (slotChange)="updateLayoutSlot($event, selectedComponent.id)"
             ></app-layout-config>
 
             <app-layout-config
               *ngSwitchCase="'MULTI_COLUMN'"
-              [initialSlotCount]="3"
+              [initialSlotCount]="selectedComponent.children.length"
               [initialLayoutConfig]="selectedComponent.props"
               [maxSlots]="8"
-              (configChange)="handleLayoutConfigChange($event, selectedComponent.id)"
+              (configChange)="upadteProps($event, selectedComponent.id)"
+              (slotChange)="updateLayoutSlot($event, selectedComponent.id)"
             ></app-layout-config>
 
             <app-layout-config
               *ngSwitchCase="'HORIZONTAL'"
-              [initialSlotCount]="3"
+              [initialSlotCount]="selectedComponent.children.length"
               [initialLayoutConfig]="selectedComponent.props"
               [maxSlots]="20"
-              (configChange)="handleLayoutConfigChange($event)"
+              (configChange)="upadteProps($event, selectedComponent.id)"
+              (slotChange)="updateLayoutSlot($event, selectedComponent.id)"
             ></app-layout-config>
 
             <app-layout-config
               *ngSwitchCase="'LIST'"
-              [initialSlotCount]="3"
+              [initialSlotCount]="selectedComponent.children.length"
               [initialLayoutConfig]="selectedComponent.props"
               [maxSlots]="8"
-              (configChange)="handleLayoutConfigChange($event)"
+              (configChange)="upadteProps($event, selectedComponent.id)"
+              (slotChange)="updateLayoutSlot($event, selectedComponent.id)"
             ></app-layout-config>
       
             <app-image-config
               *ngSwitchCase="'IMAGE'"
               [initialImageConfig]="selectedComponent.props"
-              (configChange)="handleImageConfigChange($event)"
+              (configChange)="upadteProps($event, selectedComponent.id)"
             ></app-image-config>
 
             <app-button-config
               *ngSwitchCase="'BUTTON'"
               [initialButtonConfig]="selectedComponent.props"
-              (configChange)="handleButtonConfigChange($event)"
+              (configChange)="upadteProps($event, selectedComponent.id)"
             ></app-button-config>
 
             <app-content-config
               *ngSwitchCase="'CONTENT'"
               [initialContentConfig]="selectedComponent.props"
-              (configChange)="handleButtonConfigChange($event)"
+              (configChange)="upadteProps($event, selectedComponent.id)"
             ></app-content-config>
 
             <app-title-config
               *ngSwitchCase="'TITLE'"
               [properties]="selectedComponent.props"
-              (configChange)="handleButtonConfigChange($event)"
+              (propertiesChange)="upadteProps($event, selectedComponent.id)"
             ></app-title-config>
 
             <app-divider-config
               *ngSwitchCase="'DIVIDER'"
               [initialDividerConfig]="selectedComponent.props"
-              (configChange)="handleButtonConfigChange($event)"
+              (configChange)="upadteProps($event, selectedComponent.id)"
             ></app-divider-config>
       
             <p *ngSwitchDefault class="text-gray-500 text-center py-8">选择元素查看相关配置</p>

@@ -18,6 +18,9 @@
   <ng-container *ngIf="slotChildren.length > 0;">
       <ng-container *ngFor="let slot of slotChildren">
         <app-component-renderer
+          [ngStyle]="{
+            'min-width': '20%'
+          }"
           *ngIf="slot.type === componentTypes.SLOT"
           [node]="slot"
           [selectedComponentId]="selectedComponentId"

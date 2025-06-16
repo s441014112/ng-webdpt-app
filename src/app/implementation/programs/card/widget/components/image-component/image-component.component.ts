@@ -22,55 +22,61 @@ export class ImageComponentComponent implements OnInit {
   // 新增：用于将拖放事件向上冒泡 (即使不作为容器，也需要有这个 Output 以便 ComponentRenderer 能够订阅)
   @Output() dropEvent = new EventEmitter<CdkDragDrop<any>>();
 
+  width:  string | number = 60;
+  height: string | number = 60;
 
   constructor() { }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.width = this.calculatedWidth();
+    this.height = this.calculatedHeight();
+    console.log('image-component-component.width:', this.width, 'ngOnInit: this.node: height', this.height);
+  }
 
   get imageProps(): ImageProps {
     return this.node.props as ImageProps;
   }
 
-  get calculatedWidth(): number | string {
+  calculatedWidth(): string | number {
     let result
     if (this.node.props.widthMode === ImageWidthMode.FULL) {
-      result = 'auto';
+      result = 720;
     } else {
       switch (this.node.props.fixedWidthSize) {
         case ImageFixedWidthSize.SMALL:
-          result = 100;
+          result = 60;
           break;
         case ImageFixedWidthSize.NORMAL:
-          result = 200;
+          result = 80;
           break;
         case ImageFixedWidthSize.LARGE:
-          result = 300;
+          result = 100;
           break;
         default:
-          result = this.node.props.customWidth ? Math.min(this.node.props.customWidth, 420) : 'auto';
+          result = this.node.props.customWidth ? Math.min(this.node.props.customWidth, 420) : 60;
           break;
       }
     }
     return result;
   }
 
-  get calculatedHeight(): number | string {
+  calculatedHeight(): string {
     let result
     if (this.node.props.widthMode === ImageWidthMode.FULL) {
-      result = '100%';
+      result = 720;
     } else {
       switch (this.node.props.fixedWidthSize) {
         case ImageFixedWidthSize.SMALL:
-          result = 50;
-          break;
-        case ImageFixedWidthSize.NORMAL:
           result = 60;
           break;
+        case ImageFixedWidthSize.NORMAL:
+          result = 80;
+          break;
         case ImageFixedWidthSize.LARGE:
-          result = 70;
+          result = 100;
           break;
         default:
-          result = this.node.props.customHeight ? Math.min(this.node.props.customHeight, 800) : 'auto';
+          result = this.node.props.customHeight ? Math.min(this.node.props.customHeight, 800) : 60;
           break;
       }
     }

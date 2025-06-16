@@ -32,6 +32,7 @@ export class LayoutConfigComponent implements OnInit {
 
   // 向父组件发出布局配置变化的事件
   @Output() configChange = new EventEmitter<LayoutComponentProps>();
+  @Output() slotChange = new EventEmitter<{ value: number, mode: 'add' | 'remove' }>();
 
   // ----- 内部状态管理 -----
   // 插槽列表
@@ -85,7 +86,7 @@ export class LayoutConfigComponent implements OnInit {
         name: `槽位 ${this.slots.length + 1}`
       };
       this.slots.push(newSlot);
-      this.emitConfig();
+      this.slotChange.emit({ value: this.slots.length, mode: 'add' });
     } else {
       console.warn(`最多只能添加 ${this.maxSlots} 个槽位。`);
     }
@@ -96,12 +97,13 @@ export class LayoutConfigComponent implements OnInit {
    * @param slotToDelete 要删除的槽位对象
    */
   deleteSlot(slotToDelete: SlotConfig): void {
+    const index = this.slots.findIndex(slot => slot.id === slotToDelete.id);
     this.slots = this.slots.filter(slot => slot.id !== slotToDelete.id);
     // 重新编号槽位名称，使其保持连续性
     this.slots.forEach((slot, index) => {
       slot.name = `槽位 ${index + 1}`;
     });
-    this.emitConfig();
+    this.slotChange.emit({ value: index, mode: 'remove' });
   }
 
   // ----- 背景相关方法 (与 background-config 组件中的逻辑相同) -----
@@ -138,13 +140,12 @@ export class LayoutConfigComponent implements OnInit {
     const updatedConfig: LayoutComponentProps = {
       backgroundMode: this.selectedOption,
       slotCount: this.slots.length,
+      rowGap: this.currentRowGap,
+      padding: this.currentPadding,
+      borderRadius: this.currentBorderRadius,
     };
 
-    if (this.selectedOption === 'transparent') {
-      updatedConfig.rowGap = this.currentRowGap;
-      updatedConfig.padding = this.currentPadding;
-      updatedConfig.borderRadius = this.currentBorderRadius; // 包含圆角
-    } else {
+    if (this.selectedOption === 'color') {
       updatedConfig.backgroundColor = this.currentColor;
     }
     this.configChange.emit(updatedConfig);

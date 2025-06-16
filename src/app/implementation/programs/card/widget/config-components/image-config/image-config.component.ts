@@ -23,8 +23,8 @@ export class ImageConfigComponent implements OnInit {
   // ----- 内部状态管理 -----
   widthMode: 'full' | 'fixed' = 'full';
   fixedWidthSize: string = '';
-  customWidth: number = 0;
-  customHeight: number = 0;
+  customWidth: number = 80;
+  customHeight: number = 80;
   loopRender: boolean = false;
 
   constructor() { }
@@ -67,7 +67,7 @@ export class ImageConfigComponent implements OnInit {
    */
   private emitConfig(): void {
     const updatedConfig: ImageProps = {
-      src: '',
+      src: 'assets/template/IMAGE.png',
       widthMode: this.widthMode,
       fixedWidthSize: this.fixedWidthSize,
       customWidth: this.customWidth,
