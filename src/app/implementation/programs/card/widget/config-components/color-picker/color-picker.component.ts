@@ -101,6 +101,7 @@ export class ColorPickerComponent implements OnInit {
 
   ngOnInit(): void {
     this.selectedColor = this.currentColor;
+    this.colorName = this.findColorName(this.selectedColor);
   }
 
   onColorSelect(color: string): void {

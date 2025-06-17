@@ -99,18 +99,21 @@
           <div [ngSwitch]="selectedComponent.type">
             <!-- 如果 selectedComponent.type 是 'image'，展示 app-image-config -->
             <app-background-config
+              [key]="selectedComponent.id"
               *ngSwitchCase="'ROOT'"
               [properties]="selectedComponent.props"
               (propertiesChange)="upadteProps($event, selectedComponent.id)"
             ></app-background-config>
 
             <app-slot-config
+              [key]="selectedComponent.id"
               *ngSwitchCase="'SLOT'"
               [properties]="selectedComponent.props"
               (propertiesChange)="upadteProps($event, selectedComponent.id)"
             ></app-slot-config>
 
             <app-layout-config
+              [key]="selectedComponent.id"
               *ngSwitchCase="'SINGLE_COLUMN'"
               [initialSlotCount]="selectedComponent.children.length"
               [initialLayoutConfig]="selectedComponent.props"
@@ -120,6 +123,7 @@
             ></app-layout-config>
 
             <app-layout-config
+              [key]="selectedComponent.id"
               *ngSwitchCase="'MULTI_COLUMN'"
               [initialSlotCount]="selectedComponent.children.length"
               [initialLayoutConfig]="selectedComponent.props"
@@ -129,6 +133,7 @@
             ></app-layout-config>
 
             <app-layout-config
+              [key]="selectedComponent.id"  
               *ngSwitchCase="'HORIZONTAL'"
               [initialSlotCount]="selectedComponent.children.length"
               [initialLayoutConfig]="selectedComponent.props"
@@ -138,6 +143,7 @@
             ></app-layout-config>
 
             <app-layout-config
+              [key]="selectedComponent.id"
               *ngSwitchCase="'LIST'"
               [initialSlotCount]="selectedComponent.children.length"
               [initialLayoutConfig]="selectedComponent.props"
@@ -147,30 +153,35 @@
             ></app-layout-config>
       
             <app-image-config
+              [key]="selectedComponent.id"
               *ngSwitchCase="'IMAGE'"
               [initialImageConfig]="selectedComponent.props"
               (configChange)="upadteProps($event, selectedComponent.id)"
             ></app-image-config>
 
             <app-button-config
+              [key]="selectedComponent.id"
               *ngSwitchCase="'BUTTON'"
               [initialButtonConfig]="selectedComponent.props"
               (configChange)="upadteProps($event, selectedComponent.id)"
             ></app-button-config>
 
             <app-content-config
+              [key]="selectedComponent.id"
               *ngSwitchCase="'CONTENT'"
               [initialContentConfig]="selectedComponent.props"
               (configChange)="upadteProps($event, selectedComponent.id)"
             ></app-content-config>
 
             <app-title-config
+              [key]="selectedComponent.id"
               *ngSwitchCase="'TITLE'"
               [properties]="selectedComponent.props"
               (propertiesChange)="upadteProps($event, selectedComponent.id)"
             ></app-title-config>
 
             <app-divider-config
+              [key]="selectedComponent.id"
               *ngSwitchCase="'DIVIDER'"
               [initialDividerConfig]="selectedComponent.props"
               (configChange)="upadteProps($event, selectedComponent.id)"

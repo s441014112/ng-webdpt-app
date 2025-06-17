@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef  } from '@angular/core';
 import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { ActivatedRoute } from '@angular/router'
 
@@ -7,12 +7,6 @@ import * as uuid from 'uuid';
 import { ComponentNodeModel, RootProps, SingleColumnProps, MultiColumnProps, HorizontalProps, ListProps, SlotProps, TitleProps, ContentProps, DividerProps, ImageProps, ButtonProps } from '../interface';
 import { COMPONENT_TYPE, ButtonType, ButtonWidthMode, ContentFontSize, DividerLineType, ImageFixedWidthSize, ImageWidthMode, AlignType, ButtonActionType, TextAlignType, BackgroundMode } from '../enum'; // 确保导入所有必要的枚举
 
-interface Color {
-  text: string;
-  value: string;
-  label?: string;
-  label1?: string;
-}
 @Component({
   selector: 'app-widget',
   templateUrl: './widget.component.html',
@@ -66,7 +60,7 @@ export class WidgetComponent implements OnInit {
   ];
 
 
-  constructor(private route: ActivatedRoute) { }
+  constructor(private route: ActivatedRoute, private cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
@@ -75,36 +69,49 @@ export class WidgetComponent implements OnInit {
     });
 
     // 假设从某个服务加载已有的模板数据
-    // this.loadTemplate();
+    this.rootNode = JSON.parse(localStorage.getItem(this.templateId)) || null
+    if (this.rootNode?.id) {
+      this.updateAllCanvasDropListIds(this.rootNode);
+    }
   }
+
+  // OnDestroy() : void {
+  //   localStorage.clear();
+  // }
 
   // 组件选中事件处理
   onSelectComponent(component: ComponentNodeModel): void {
-    this.selectedComponent = component;
-    console.log('Selected Component:', this.selectedComponent);
-
-    // Root组件不能有右键菜单
-
-    if (this.selectedComponent.type === COMPONENT_TYPE.ROOT) {
-      return;
-    }
-
-    // 设置菜单位置为点击组件的右上角
-    const target = document.getElementById(this.selectedComponent.id) as HTMLElement;
-    const rect = target.getBoundingClientRect();
-    
-    this.menuPosition = {
-      top: `${rect.top - 40}px`,
-      left: `${rect.right - 70}px`
-    };
-    
-    this.showMenu = true;
+    this.selectedComponent = null;
+    setTimeout(() => {
+      this.selectedComponent = JSON.parse(JSON.stringify(component));;
+      console.log('Selected Component:', this.selectedComponent);
+  
+      // Root组件不能有右键菜单
+  
+      if (this.selectedComponent.type === COMPONENT_TYPE.ROOT) {
+        return;
+      }
+  
+      // 设置菜单位置为点击组件的右上角
+      const target = document.getElementById(this.selectedComponent.id) as HTMLElement;
+      const rect = target.getBoundingClientRect();
+      
+      this.menuPosition = {
+        top: `${rect.top - 40}px`,
+        left: `${rect.right - 70}px`
+      };
+      
+      this.showMenu = true;
+      this.cdr.detectChanges(); // 手动触发检测
+    }, 0);
   }
 
   // 保存模板
   saveTemplate(): void {
     console.log('Saving template:', JSON.stringify(this.rootNode, null, 2));
     // 这里可以添加将 this.rootNode 发送到后端保存的逻辑
+    // 先保存到本地缓存吧
+    localStorage.setItem(this.rootNode.id, JSON.stringify(this.rootNode));
   }
 
   /**
