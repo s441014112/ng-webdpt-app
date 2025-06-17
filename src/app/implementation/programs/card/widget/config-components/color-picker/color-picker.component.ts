@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input, ChangeDetectorRef  } from '@angular/core';
 
 interface Color {
   text: string;
@@ -19,7 +19,11 @@ export class ColorPickerComponent implements OnInit {
 
   @Output() colorChange = new EventEmitter<string>();
 
-  selectedColor: string | null = '#000000';
+  selectedColor: string | null = '#262626';
+
+  colorName: string = '焦炭黑'
+
+  isDropdownOpen: boolean = false;
 
   colors: Color[][] = [
     [
@@ -84,24 +88,26 @@ export class ColorPickerComponent implements OnInit {
     ]
   ];
 
-  constructor() { }
+  constructor(private cdr: ChangeDetectorRef) { }
 
-  get colorName(): string {
-    for (let i = 0; i < this.colors.length; i++) {
-      for (let j = 0; j < this.colors[i].length; j++) {
-        if (this.colors[i][j].value === this.selectedColor) {
-          return this.colors[i][j].text;
-        }
-      }
-
+  // 优化后的颜色查找方法
+  private findColorName(colorValue: string): string {
+    for (const row of this.colors) {
+      const found = row.find(c => c.value === colorValue);
+      if (found) return found.text;
     }
+    return '请选择颜色';
   }
 
   ngOnInit(): void {
     this.selectedColor = this.currentColor;
   }
 
-  onColorSelect(): void {
-    this.colorChange.emit(this.selectedColor);
+  onColorSelect(color: string): void {
+    this.selectedColor = color;
+    this.colorName = this.findColorName(color);
+    this.isDropdownOpen = false;
+    this.colorChange.emit(color);
+    this.cdr.detectChanges(); // 手动触发变更检测
   }
 }

@@ -1,25 +1,29 @@
 <nz-select
   [(ngModel)]="selectedColor"
+  [(nzOpen)]="isDropdownOpen"
   nzAllowClear
-  nzPlaceHolder="选择颜色"
-  (ngModelChange)="onColorSelect()"
   [nzDropdownMatchSelectWidth]="false"
   nzDropdownClassName="color-picker-dropdown"
-  [nzCustomTemplate]="colorInput"
+  [nzDropdownRender]="renderCustomDropdown"
 >
-  <div class="color-row" *ngFor="let row of colors"> 
-    <div class="color-block-grid" *ngFor="let color of row">
-      <nz-option [nzValue]="color.value" [nzLabel]="color.text" [nzCustomContent]="true">
-        <div class="color-block-option">
+  <nz-option nzValue="" nzLabel="" style="display: none;"></nz-option>
+
+  <ng-template #nzCustomTemplate>
+    <div class="selected-color-display">
+      <span class="color-square" [style.background-color]="selectedColor"></span>
+      <span class="color-name">{{ colorName || '请选择颜色' }}</span>
+    </div>
+  </ng-template>
+
+  <!-- 自定义下拉模板 -->
+  <ng-template #renderCustomDropdown>
+    <div class="color-row" *ngFor="let row of colors"> 
+      <div class="color-block-grid" *ngFor="let color of row">
+        <div class="color-block-option" (click)="onColorSelect(color.value)">
           <span class="color-block-grid" [style.background-color]="color.value"></span>
         </div>
-      </nz-option>
+      </div>
     </div>
-  </div>
+  </ng-template>
+
 </nz-select>
-<ng-template #colorInput let-selected>
-  <div class="selected-color-display">
-    <span class="color-square" [style.background-color]="selectedColor"></span>
-    <span class="color-name">{{ colorName || '请选择颜色' }}</span>
-  </div>
-</ng-template>
