@@ -609,7 +609,7 @@ export class WidgetComponent implements OnInit {
       case COMPONENT_TYPE.DIVIDER:
         return { ...commonProps, name: '分割线', props: { color: '#262626', paddingTop: '8px', paddingBottom: '8px', lineType: DividerLineType.DASHED } as DividerProps };
       case COMPONENT_TYPE.IMAGE:
-        return { ...commonProps, name: '图片', props: { src: 'assets/template/IMAGE.png', widthMode: ImageWidthMode.FIXED, fixedWidthSize: ImageFixedWidthSize.CUSTOM, customWidth: 60, customHeight: 60 } as ImageProps };
+        return { ...commonProps, name: '图片', props: { src: 'assets/template/IMAGE.png', widthMode: ImageWidthMode.FIXED, fixedWidthSize: ImageFixedWidthSize.CUSTOM, customWidth: 80, customHeight: 80 } as ImageProps };
       case COMPONENT_TYPE.BUTTON:
         return { ...commonProps, name: '按钮', props: { buttonText: '这是按钮', buttonType: ButtonType.PRIMARY, widthMode: ButtonWidthMode.AUTO, width: 80, align: AlignType.CENTER, disabledAfterTrigger: false, actionType: ButtonActionType.CALL_PLUGIN } as ButtonProps };
       default:

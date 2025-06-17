@@ -26,8 +26,8 @@ export class ImageComponentComponent implements OnInit {
   // 新增：用于将拖放事件向上冒泡 (即使不作为容器，也需要有这个 Output 以便 ComponentRenderer 能够订阅)
   @Output() dropEvent = new EventEmitter<CdkDragDrop<any>>();
 
-  width:  string | number = 60;
-  height: string | number = 60;
+  width:  string | number = 80;
+  height: string | number = 80;
 
   constructor() { }
 
@@ -48,16 +48,16 @@ export class ImageComponentComponent implements OnInit {
     } else {
       switch (this.node.props.fixedWidthSize) {
         case ImageFixedWidthSize.SMALL:
-          result = 60;
+          result = 40;
           break;
         case ImageFixedWidthSize.NORMAL:
           result = 80;
           break;
         case ImageFixedWidthSize.LARGE:
-          result = 100;
+          result = 200;
           break;
         default:
-          result = this.node.props.customWidth ? Math.min(this.node.props.customWidth, 420) : 60;
+          result = this.node.props.customWidth ? Math.min(this.node.props.customWidth, 420) : 80;
           break;
       }
     }
@@ -71,16 +71,16 @@ export class ImageComponentComponent implements OnInit {
     } else {
       switch (this.node.props.fixedWidthSize) {
         case ImageFixedWidthSize.SMALL:
-          result = 60;
+          result = 40;
           break;
         case ImageFixedWidthSize.NORMAL:
           result = 80;
           break;
         case ImageFixedWidthSize.LARGE:
-          result = 100;
+          result = 200;
           break;
         default:
-          result = this.node.props.customHeight ? Math.min(this.node.props.customHeight, 800) : 60;
+          result = this.node.props.customHeight ? Math.min(this.node.props.customHeight, 800) : 80;
           break;
       }
     }
