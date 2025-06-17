@@ -13,7 +13,7 @@ import { COMPONENT_TYPE } from '../../../enum/index';
   templateUrl: './horizontal-component.component.html',
   styleUrls: ['./horizontal-component.component.less'],
   host: {
-    '[style.display]': 'flex',
+    '[style.display]': '"flex"',
     '[style.width]': '"100%"',
   }
 })

@@ -13,7 +13,7 @@ import { COMPONENT_TYPE } from '../../../enum/index';
   templateUrl: './multi-component.component.html',
   styleUrls: ['./multi-component.component.less'],
   host: {
-    '[style.display]': 'flex',
+    '[style.display]': '"flex"',
     '[style.width]': '"100%"',
   }
 })

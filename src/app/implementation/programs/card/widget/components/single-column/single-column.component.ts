@@ -12,7 +12,7 @@ import { COMPONENT_TYPE } from '../../../enum/index';
   templateUrl: './single-column.component.html',
   styleUrls: ['./single-column.component.less'],
   host: {
-    '[style.display]': 'flex',
+    '[style.display]': '"flex"',
     '[style.width]': '"100%"',
   }
 })

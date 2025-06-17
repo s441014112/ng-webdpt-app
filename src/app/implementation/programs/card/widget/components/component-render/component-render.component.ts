@@ -34,7 +34,7 @@ import { SlotComponentComponent } from '../slot-component/slot-component.compone
   templateUrl: './component-render.component.html',
   styleUrls: ['./component-render.component.less'],
   host: {
-    '[style.display]': 'flex',
+    '[style.display]': '"flex"',
     '[style.width]': '"100%"',
   }
 })

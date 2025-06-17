@@ -11,7 +11,7 @@ import { ComponentNodeModel, DividerProps } from '../../../interface/index';
   templateUrl: './divider-component.component.html',
   styleUrls: ['./divider-component.component.less'],
   host: {
-    '[style.display]': 'flex',
+    '[style.display]': '"flex"',
     '[style.width]': '"100%"',
   }
 })

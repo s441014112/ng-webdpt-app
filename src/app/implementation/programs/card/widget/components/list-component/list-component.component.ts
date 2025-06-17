@@ -12,7 +12,7 @@ import { COMPONENT_TYPE } from '../../../enum/index'; // 导入 COMPONENT_TYPE �
   templateUrl: './list-component.component.html',
   styleUrls: ['./list-component.component.less'],
   host: {
-    '[style.display]': 'flex',
+    '[style.display]': '"flex"',
     '[style.width]': '"100%"',
   }
 })

@@ -9,7 +9,10 @@ import { ImageFixedWidthSize, ImageWidthMode } from '../../../enum';
 @Component({
   selector: 'app-image-component',
   templateUrl: './image-component.component.html',
-  styleUrls: ['./image-component.component.less']
+  styleUrls: ['./image-component.component.less'],
+  host: {
+    '[style.display]': '"contents"',
+  }
 })
 
 export class ImageComponentComponent implements OnInit {
@@ -41,7 +44,7 @@ export class ImageComponentComponent implements OnInit {
   calculatedWidth(): string | number {
     let result
     if (this.node.props.widthMode === ImageWidthMode.FULL) {
-      result = 720;
+      result = '100%';
     } else {
       switch (this.node.props.fixedWidthSize) {
         case ImageFixedWidthSize.SMALL:
@@ -64,7 +67,7 @@ export class ImageComponentComponent implements OnInit {
   calculatedHeight(): string {
     let result
     if (this.node.props.widthMode === ImageWidthMode.FULL) {
-      result = 720;
+      result = '100%';
     } else {
       switch (this.node.props.fixedWidthSize) {
         case ImageFixedWidthSize.SMALL:

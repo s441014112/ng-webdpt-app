@@ -1,7 +1,7 @@
 <div class="image-component-wrapper"
   [ngClass]="{ 'selected': isSelected(node) }"
   [ngStyle]="{
-    'width': imageProps.widthMode === 'full' ? '100%' : 'fit-content'
+    'width': imageProps.widthMode === 'full' ? '100%' : 'max-content'
   }"
   (click)="onComponentClick($event, node)"
   cdkDrag
@@ -9,11 +9,17 @@
   [cdkDragData]="node"
   (cdkDropListDropped)="onImageDrop($event)"
 >
-  <div class="image-container">
+  <div class="image-container"
+    [ngStyle]="{
+      'width': imageProps.widthMode === 'full' ? '100%' : 'max-content'
+    }"
+  >
     <img
+      [ngStyle]="{
+        'width': imageProps.widthMode === 'full' ? '100%' : width + 'px',
+        'height': imageProps.widthMode === 'full' ? '100%' : height + 'px'
+      }"
       [src]="imageProps?.src || 'assets/template/IMAGE.png'"
-      [width]="width"
-      [height]="height"
     />
   </div>
 </div>

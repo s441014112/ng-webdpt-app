@@ -10,7 +10,7 @@ import { ComponentNodeModel, ContentProps } from '../../../interface/index';
   templateUrl: './content-component.component.html',
   styleUrls: ['./content-component.component.less'],
   host: {
-    '[style.display]': 'flex',
+    '[style.display]': '"flex"',
     '[style.width]': '"100%"',
   }
 })

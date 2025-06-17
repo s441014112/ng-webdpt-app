@@ -1,29 +1,26 @@
 .image-component-wrapper {
-  box-sizing: border-box;
   padding: 4px;
+  max-width: 100%;
+  box-sizing: border-box;
   transition: border 0.2s ease-in-out;
   position: relative;
   display: inline-flex;
-  justify-content: center;
   align-items: center;
-  flex: 1;
-
-  &:hover {
-    border-radius: 8px 8px 8px 8px;
-    border: 1px dashed #4E6FFF;
-  }
-
-  &.selected {
-    border-radius: 8px 8px 8px 8px;
-    border: 2px solid #4E6FFF;
-  }
 
   .image-container {
-    width: 100%;
     display: flex;
-    justify-content: center;
     align-items: center;
     position: relative;
+
+    &:hover {
+      border-radius: 8px 8px 8px 8px;
+      border: 1px dashed #4E6FFF;
+    }
+  
+    &.selected {
+      border-radius: 8px 8px 8px 8px;
+      border: 2px solid #4E6FFF;
+    }
     
     img {
       display: block;

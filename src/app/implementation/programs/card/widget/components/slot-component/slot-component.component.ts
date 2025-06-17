@@ -7,7 +7,7 @@ import { CdkDragDrop } from '@angular/cdk/drag-drop'; // 导入 CdkDragDrop 类�
   templateUrl: './slot-component.component.html',
   styleUrls: ['./slot-component.component.less'],
   host: {
-    '[style.display]': 'flex',
+    '[style.display]': '"flex"',
     '[style.width]': '"100%"',
   }
 })
