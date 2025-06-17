@@ -21,21 +21,36 @@
   color: #5D5F66;
 }
 
+
+
+/* 确保 Radio 按钮之间的间隔一致 */
+.ant-radio-group {
+  padding: 4px;
+  border-radius: 10px;
+  gap: 3px;
+  background-color: #F7F8FA;
+  display: flex;
+  justify-content: space-between;
+}
+
 .ant-radio-button-wrapper {
-  border-radius: 0.375rem !important;
-  border-color: #d9d9d9 !important;
+  background-color: rgb(245, 245, 245) !important;
+  border-radius: 8px !important;
+  border-color: rgb(245, 245, 245) !important;
+  color: #999DAC !important;
+  flex: 1;
 }
 
 .ant-radio-button-wrapper-checked {
-  background-color: #1890ff !important;
-  border-color: #1890ff !important;
-  color: #fff !important;
+  background-color: #ffffff !important;
+  border-color: rgb(245, 245, 245) !important;
+  color: #333333 !important;
 }
 
-/* 确保 Radio 按钮之间的间隔一致 */
 .ant-radio-button-wrapper:not(:first-child)::before {
   display: none !important;
 }
+
 
 nz-select {
   width: 100%;
