@@ -27,10 +27,15 @@ export class BackgroundConfigComponent implements OnInit {
 
   // 下拉框选项，从 0px 到 8px
   spacingOptions: { label: string, value: string }[] = [
-    { label: '无', value: PaddingSize.NONE },
-    { label: '小', value: PaddingSize.SMALL },
-    { label: '中', value: PaddingSize.MEDIUM },
-    { label: '大', value: PaddingSize.LARGE },
+    { label: '0px', value: '0px' },
+    { label: '4px', value: '4px' },
+    { label: '8px', value: '8px' },
+    { label: '12px', value: '12px' },
+    { label: '16px', value: '16px' },
+    { label: '20px', value: '20px' },
+    { label: '24px', value: '24px' },
+    { label: '28px', value: '28px' },
+    { label: '32px', value: '32px' },
   ]
 
   constructor() { }

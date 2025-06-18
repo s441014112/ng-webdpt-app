@@ -89,6 +89,7 @@ export class WidgetComponent implements OnInit {
   
       // Root组件不能有右键菜单
       if (this.selectedComponent.type === COMPONENT_TYPE.ROOT) {
+        this.showMenu = false;
         return;
       }
   
