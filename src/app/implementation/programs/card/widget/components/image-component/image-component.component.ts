@@ -34,7 +34,6 @@ export class ImageComponentComponent implements OnInit {
   ngOnInit(): void {
     this.width = this.calculatedWidth();
     this.height = this.calculatedHeight();
-    console.log('image-component-component.width:', this.width, 'ngOnInit: this.node: height', this.height);
   }
 
   get imageProps(): ImageProps {

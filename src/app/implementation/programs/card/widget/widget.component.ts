@@ -291,8 +291,17 @@ export class WidgetComponent implements OnInit {
       console.log('Root component created and added to canvas.');
     }
 
+    const draggedData = event.item.data;
+    const draggedType = typeof draggedData === 'string' ? draggedData : draggedData.type; 
+
     // 获取鼠标释放时的坐标 { x, y }
-    const dropPoint = event.dropPoint; 
+    // 这里的问题是如果不加event.distance.y, 会导致组件从上方往下方组件内拖动，组件会被拖到自己子组件内，从而从画布消失
+    // 这里加上event.distance.y其实并没有解决问题，但是算是从表面上不消失了，现在对鼠标位置有了要求。
+    let dropPoint = { x: event.dropPoint.x, y: event.dropPoint.y };
+    if (this.isLayoutComponent(draggedType)) {
+      dropPoint = { x: event.dropPoint.x, y: event.dropPoint.y + event.distance.y };
+    }
+    
     let actualTargetContainerId: string | null = null;
     // 获取所有可能的画布内部拖放目标（通过 ID 获取 DOM 元素）
     const potentialCanvasDropTargets: { id: string, element: HTMLElement }[] = [];
@@ -332,9 +341,6 @@ export class WidgetComponent implements OnInit {
     }
     // 如果通过坐标找到了最佳匹配
     actualTargetContainerId = bestMatchId || event.container.id;
-
-    const draggedData = event.item.data;
-    const draggedType = typeof draggedData === 'string' ? draggedData : draggedData.type; 
 
     // 1. 获取初始节点信息，获取结束节点信息
     // currentContainerId 是当前鼠标所在的 drop list 的 ID
