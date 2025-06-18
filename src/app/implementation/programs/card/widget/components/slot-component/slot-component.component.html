@@ -18,9 +18,10 @@
       <app-component-renderer
         [ngStyle]="{
           'justify-content': slotProps.justifyContent,
-          'align-items': slotProps.alignItems
+          'align-items': slotProps.alignItems,
+          'display': 'flex',
+          'height': '100%'
         }"
-        [style.display]="'flex'"
         [node]="childNode"
         [selectedComponentId]="selectedComponentId"
         (selectComponent)="selectComponent.emit($event)"
