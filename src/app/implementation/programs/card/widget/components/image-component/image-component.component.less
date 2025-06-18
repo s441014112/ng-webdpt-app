@@ -7,21 +7,18 @@
   display: inline-flex;
   align-items: center;
 
+  &:hover {
+    border: 1px dashed #4E6FFF;
+  }
+
+  &.selected {
+    border: 2px solid #4E6FFF;
+  }
+
   .image-container {
     display: flex;
     align-items: center;
-    position: relative;
-
-    &:hover {
-      border-radius: 8px 8px 8px 8px;
-      border: 1px dashed #4E6FFF;
-    }
-  
-    &.selected {
-      border-radius: 8px 8px 8px 8px;
-      border: 2px solid #4E6FFF;
-    }
-    
+    position: relative;    
     img {
       display: block;
     }

@@ -64,7 +64,7 @@
     <div class="config-label">圆角</div>
     <div class="config-container">
       <nz-select [(ngModel)]="currentBorderRadius" (ngModelChange)="onBorderRadiusChange($event)" class="flex-1 rounded-md" name="borderRadius">
-        <nz-option *ngFor="let option of spacingOptions" [nzValue]="option.value" [nzLabel]="option.label"></nz-option>
+        <nz-option *ngFor="let option of spacingOptions.slice(0, 5)" [nzValue]="option.value" [nzLabel]="option.label"></nz-option>
       </nz-select>
     </div>
 </div>

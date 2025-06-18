@@ -53,6 +53,7 @@ export class WidgetComponent implements OnInit {
   allCanvasDropListIds: string[] = ['canvas-root-drop-list',"container-component-list", "primitive-component-list"];
 
   showMenu = false;
+  showDeleteButton = true;
   menuPosition = { top: '0px', left: '0px' };
   menuItems: { label: string, action: string }[] = [
     {label: '复制', action: 'copy'},
@@ -87,7 +88,6 @@ export class WidgetComponent implements OnInit {
       console.log('Selected Component:', this.selectedComponent);
   
       // Root组件不能有右键菜单
-  
       if (this.selectedComponent.type === COMPONENT_TYPE.ROOT) {
         return;
       }
@@ -102,7 +102,18 @@ export class WidgetComponent implements OnInit {
       };
       
       this.showMenu = true;
-      this.cdr.detectChanges(); // 手动触发检测
+      // 如果点击选中的是Slot组件，并且没有兄弟节点，则不显示删除按钮
+      if (this.selectedComponent.type === COMPONENT_TYPE.SLOT) {
+        const parentNode = this.findParentComponentById(this.rootNode, this.selectedComponent.id)
+        if (parentNode && parentNode.children?.length > 1) {
+          this.showDeleteButton = true;
+        } else {
+          this.showDeleteButton = false;
+        }
+      } else {
+        this.showDeleteButton = true;
+      }
+      this.cdr.detectChanges();
     }, 0);
   }
 
@@ -168,6 +179,7 @@ export class WidgetComponent implements OnInit {
   onDeleteComponent(componentId: string): void {
 
     this.showMenu = false;
+    this.showDeleteButton = true;
 
     if (!this.rootNode) return;
 
@@ -202,6 +214,7 @@ export class WidgetComponent implements OnInit {
   // 复制组件
   onCopyComponent(componentToCopy: ComponentNodeModel): void {
     this.showMenu = false;
+    this.showDeleteButton = true;
 
     if (!this.rootNode) return;
 
@@ -533,6 +546,24 @@ export class WidgetComponent implements OnInit {
     }
     return null;
   }
+
+  // 辅助方法, 根据ID查找当前ID的直接父级组件
+  findParentComponentById(node: ComponentNodeModel | null, id: string): ComponentNodeModel | null { 
+    if (!node) return null;
+    if (node.children) { 
+      for (const child of node.children) { 
+        if (child.id === id) { 
+          return node; 
+        } else { 
+          const parent = this.findParentComponentById(child, id); 
+          if (parent) { 
+            return parent; 
+          } 
+        } 
+      }
+    }
+  }
+
 
   // 辅助方法：创建新的组件节点
   createComponentNode(type: COMPONENT_TYPE): ComponentNodeModel | null {

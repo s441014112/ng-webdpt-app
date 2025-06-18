@@ -3,9 +3,18 @@
   box-sizing: border-box;
   padding: 8px;
   transition: border 0.2s ease-in-out;
+  border-radius: 8px 8px 8px 8px;
   position: relative;
   display: inline-flex;
   align-items: center;
+
+  &:hover {
+    border: 1px dashed #4E6FFF;
+  }
+
+  &.selected {
+    border: 2px solid #4E6FFF;
+  }
 
   .custom-button {
     padding: 4px;
@@ -16,14 +25,5 @@
     justify-content: center;
     box-sizing: border-box;
 
-    &:hover {
-      border-radius: 8px 8px 8px 8px;
-      border: 1px dashed #4E6FFF;
-    }
-  
-    &.selected {
-      border-radius: 8px 8px 8px 8px;
-      border: 2px solid #4E6FFF;
-    }
   }
 }
