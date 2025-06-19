@@ -311,8 +311,8 @@ export class WidgetComponent implements OnInit {
     // 获取鼠标释放时的坐标 { x, y }
     // 这里的问题是从上方往下方拖动时, 原来的元素从文档流脱离，导致定位不准
     let dropPoint = { x: event.dropPoint.x, y: event.dropPoint.y };
-    // 从上方往下方拖动时，鼠标实际Y坐标应该加上当前元素高度
-    if (event.distance.y > 0) {
+    // 在画布中拖拽时，从上方往下方拖动时，鼠标实际Y坐标应该加上当前元素高度
+    if (event.distance.y > 0 && event.previousContainer.id !== 'container-component-list' && event.previousContainer.id !== 'primitive-component-list') {
       const elementHeight = event.item.element.nativeElement.offsetHeight;
       dropPoint.y = dropPoint.y + elementHeight;
     }
