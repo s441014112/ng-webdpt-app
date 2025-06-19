@@ -61,7 +61,7 @@ export class WidgetComponent implements OnInit {
   ];
 
 
-  constructor(private route: ActivatedRoute, private cdr: ChangeDetectorRef) { }
+  constructor(private route: ActivatedRoute, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
@@ -123,7 +123,7 @@ export class WidgetComponent implements OnInit {
     console.log('Saving template:', JSON.stringify(this.rootNode, null, 2));
     // 这里可以添加将 this.rootNode 发送到后端保存的逻辑
     // 先保存到本地缓存吧
-    localStorage.setItem(this.rootNode.id, JSON.stringify(this.rootNode));
+    // localStorage.setItem(this.rootNode.id, JSON.stringify(this.rootNode));
   }
 
   /**
@@ -309,13 +309,14 @@ export class WidgetComponent implements OnInit {
     const draggedType = typeof draggedData === 'string' ? draggedData : draggedData.type; 
 
     // 获取鼠标释放时的坐标 { x, y }
-    // 这里的问题是如果不加event.distance.y, 会导致组件从上方往下方组件内拖动，组件会被拖到自己子组件内，从而从画布消失
-    // 这里加上event.distance.y其实并没有解决问题，但是算是从表面上不消失了，现在对鼠标位置有了要求。
+    // 这里的问题是从上方往下方拖动时, 原来的元素从文档流脱离，导致定位不准
     let dropPoint = { x: event.dropPoint.x, y: event.dropPoint.y };
-    if (this.isLayoutComponent(draggedType)) {
-      dropPoint = { x: event.dropPoint.x, y: event.dropPoint.y + event.distance.y };
+    // 从上方往下方拖动时，鼠标实际Y坐标应该加上当前元素高度
+    if (event.distance.y > 0) {
+      const elementHeight = event.item.element.nativeElement.offsetHeight;
+      dropPoint.y = dropPoint.y + elementHeight;
     }
-    
+
     let actualTargetContainerId: string | null = null;
     // 获取所有可能的画布内部拖放目标（通过 ID 获取 DOM 元素）
     const potentialCanvasDropTargets: { id: string, element: HTMLElement }[] = [];
@@ -323,6 +324,12 @@ export class WidgetComponent implements OnInit {
       // 排除左侧面板的组件列表，它们不是画布上的放置目标
       if (id === 'container-component-list' || id === 'primitive-component-list') {
         continue;
+      }
+      // 排除当前节点的子级
+      if (draggedData?.children?.length) {
+        if (draggedData.children.some(child => child.id === id)) {
+          continue;
+        }
       }
       const element = document.getElementById(id);
       if (element) {
