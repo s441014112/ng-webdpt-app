@@ -1,39 +1,64 @@
 /**
  * 表示画布上的组件节点模型
  * 可以包含自身作为子节点（递归结构）
+ * id 唯一标识符，uuid
+ * type 组件类型
+ * name 组件显示名称
+ * props 组件属性配置
+ * children 子组件列表
  */
 export interface ComponentNodeModel {
-  id: string;             // 唯一标识符，uuid
-  type: string;           // 组件类型
-  name?: string;          // 组件显示名称（可选）
-  props?: Record<string, any>; // 组件属性配置（可选）
-  children?: ComponentNodeModel[]; // 子组件列表（递归结构）
+  id: string;
+  type: string;
+  name?: string;
+  props?: Record<string, any>;
+  children?: ComponentNodeModel[];
 }
 
-// Root 组件属性
+/**
+ * Root 组件属性
+ * backgroundMode 背景模式 (颜色/透明)
+ * backgroundColor  背景颜色
+ * rowGap 行间距
+ * padding 内边距
+*/ 
 export interface RootProps {
-  backgroundMode?: string; // 背景模式 (颜色/透明)
+  backgroundMode?: string;
   backgroundColor?: string;
-  rowGap?: string; // 行内距
-  padding?: string;  // 内边距
+  rowGap?: string;
+  padding?: string;
 }
 
-// Slot 插槽组件属性
+/**
+ * Slot 插槽组件属性
+ * alignItems 垂直对齐
+ * justifyContent 水平对齐
+ * rowGap 行间距
+ * padding 内边距
+ */
 export interface SlotProps {
-  alignItems?: string; // 垂直对齐 
-  justifyContent?: string; // 水平对齐 
-  rowGap?: string; // 行间距 
-  padding?: string; // 内边距 (0, 2, 4, 8) 
+  alignItems?: string;
+  justifyContent?: string;
+  rowGap?: string;
+  padding?: string;
 }
 
-// 布局组件通用属性 (SingleColumn, MultiColumn, Horizontal, List)
+/**
+ * 布局组件通用属性 (SingleColumn, MultiColumn, Horizontal, List)
+ * slotCount 插槽数量
+ * backgroundMode 背景模式 (颜色/透明)
+ * backgroundColor 背景颜色
+ * rowGap 行间距
+ * padding 内边距
+ * borderRadius 圆角
+ */
 export interface LayoutComponentProps {
-  slotCount?: number; // 插槽数量 (虽然单列组件默认只有一个插槽，但多列/横滑组件会用到)
-  backgroundMode?: string; // 背景模式 (颜色/透明)
-  backgroundColor?: string; // 背景颜色
-  rowGap?: string; // 行间距 (布局容器内部的行间距)
-  padding?: string; // 内边距
-  borderRadius?: string; // 圆角
+  slotCount?: number;
+  backgroundMode?: string;
+  backgroundColor?: string;
+  rowGap?: string;
+  padding?: string;
+  borderRadius?: string;
 }
 
 // 单列组件属性 (继承 LayoutComponentProps)
@@ -55,47 +80,72 @@ export interface TitleProps {
   align?: string;
 }
 
-// 内容组件属性
+/**
+ * 内容组件属性
+ * text 内容
+ * fontColor 颜色
+ * fontWeight 字体 (常规或加粗)
+ * fontSize 字体大小
+ * align 对齐
+ * maxLines 最大行数 (最多5行)
+ * loopRender 循环渲染 (高级设置)
+ */
 export interface ContentProps {
   text: string;
-  fontColor?: string; // 颜色 
-  fontWeight?: 'normal' | 'bold'; // 字体 (常规或加粗) 
-  fontSize?: string; // 字体大小 
-  align?: string; // 对齐 
-  maxLines?: number; // 最大行数 (最多5行) 
-  loopRender?: boolean; // 循环渲染 (高级设置) 
+  fontColor?: string;
+  fontWeight?: 'normal' | 'bold';
+  fontSize?: string;
+  align?: string;
+  maxLines?: number;
+  loopRender?: boolean;
 }
 
-// 分割线组件属性
+/**
+ * 分割线组件属性
+ * color 线条颜色
+ * paddingTop 上边距
+ * paddingBottom 下边距
+ * lineType 线型
+ */
 export interface DividerProps {
-  color?: string; // 线条颜色 
-  paddingTop?: string; // 上边距 
-  paddingBottom?: string; // 下边距 
-  lineType?: string; // 线型
+  color?: string;
+  paddingTop?: string;
+  paddingBottom?: string;
+  lineType?: string;
 }
 
 /**
  * 图片组件属性
+ * widthMode 宽度模式 (宽度铺满/固定宽度)
  * customWidth 自定义宽度 (当 widthMode 为 FIXED 且未选择 fixedWidthSize 时)
  * customHeight 自定义高度 (当 widthMode 为 FIXED 且未选择 fixedWidthSize 时)
  */
 export interface ImageProps {
   src: string;
-  widthMode?: 'full' | 'fixed'; // 宽度模式：固定宽度 / 宽度铺满
+  widthMode?: 'full' | 'fixed';
   fixedWidthSize?: string; 
   customWidth?: number;
   customHeight?: number; 
   loopRender?: boolean;
 }
 
-// 按钮组件属性
+/**
+ * 按钮组件属性
+ * buttonType 按钮类型 (普通/主按钮/危险按钮)
+ * buttonText 按钮文本
+ * widthMode 宽度模式 (自动/拉伸/固定)
+ * width 宽度
+ * align 对齐方式
+ * disabledAfterTrigger 触发后是否禁用
+ * actionType 按钮操作
+ */
 export interface ButtonProps {
-  buttonType?: string; // 按钮类型 
+  buttonType?: string;
   buttonText?: string;
-  widthMode?: 'auto' | 'stretch' | 'fixed'; // 宽度模式 
-  width?: number; // 固定宽度时的值 
-  align?: string; // 对齐方式 
-  disabledAfterTrigger?: boolean; // 触发后是否禁用 
-  actionType?: 'CALL_PLUGIN' | 'OPEN_URL'; // 按钮操作 
+  widthMode?: 'auto' | 'stretch' | 'fixed';
+  width?: number;
+  align?: string;
+  disabledAfterTrigger?: boolean;
+  actionType?: 'CALL_PLUGIN' | 'OPEN_URL';
 }
 
