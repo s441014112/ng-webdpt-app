@@ -94,7 +94,10 @@
           (click)="showRightPanel = !showRightPanel"></i>
       </div>
       <ng-container>
-        <p *ngIf="!selectedComponent" class="text-gray-500 text-center py-8">选择元素查看相关配置</p>
+        <div *ngIf="!selectedComponent" class="sider-nodata">
+          选择元素查看相关配置
+          <p><img class="component-icon" src="assets/template/nodata.png" alt="暂无数据" /></p>
+        </div>
         <ng-container *ngIf="selectedComponent && !showRightPanel">
           <div [ngSwitch]="selectedComponent.type">
             <!-- 如果 selectedComponent.type 是 'image'，展示 app-image-config -->
