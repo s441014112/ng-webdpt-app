@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy, ChangeDetectorRef  } from '@angular/core';
 import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { ActivatedRoute } from '@angular/router'
+import { NzMessageService } from 'ng-zorro-antd/message';
 
 import * as uuid from 'uuid';
 
@@ -61,7 +62,7 @@ export class WidgetComponent implements OnInit {
   ];
 
 
-  constructor(private route: ActivatedRoute, private cdr: ChangeDetectorRef) {}
+  constructor(private route: ActivatedRoute, private cdr: ChangeDetectorRef, private message: NzMessageService) {}
 
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
@@ -156,7 +157,7 @@ export class WidgetComponent implements OnInit {
     if (componentType === COMPONENT_TYPE.TITLE) {
       const existingTitle = this.findComponentByType(this.rootNode, COMPONENT_TYPE.TITLE);
       if (existingTitle) {
-        alert('画布中已存在标题组件，一个画布只能有一个标题组件。');
+        this.message.info('画布中已存在标题组件，一个画布只能有一个标题组件。');
         return;
       }
     }
@@ -213,6 +214,7 @@ export class WidgetComponent implements OnInit {
   }
 
   // 复制组件
+  // 此处应该增加复制插槽组件时不能大于8个的限制，懒得写了
   onCopyComponent(componentToCopy: ComponentNodeModel): void {
     this.showMenu = false;
     this.showDeleteButton = true;
@@ -221,7 +223,7 @@ export class WidgetComponent implements OnInit {
 
     // Title节点不可复制
     if (this.selectedComponent.type === COMPONENT_TYPE.TITLE) {
-      alert('画布中已存在标题组件，一个画布只能有一个标题组件。');
+      this.message.info('画布中已存在标题组件，一个画布只能有一个标题组件。');
       return;
     }
 
@@ -395,7 +397,7 @@ export class WidgetComponent implements OnInit {
       // 4. 若组件类型为Title, 查询画布中是否已存在Title组件，若有则不得再拖入
       if (draggedType === COMPONENT_TYPE.TITLE) {
         if (this.findComponentByType(this.rootNode, COMPONENT_TYPE.TITLE)) {
-          alert('画布中已存在标题组件，一个画布只能有一个标题组件。');
+          this.message.info('画布中已存在标题组件，一个画布只能有一个标题组件。');
           return;
         }
       }
