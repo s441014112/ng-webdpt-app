@@ -1,7 +1,12 @@
 <div class="background-config-container p-4 rounded-lg shadow-sm">
 
-  <div class="config-label">颜色</div>
+  <div class="config-label">文本</div>
 
+  <div class="config-container">
+    <textarea nz-input [(ngModel)]="text" (ngModelChange)="onTextChange($event)" [nzAutosize]="{ minRows: 3, maxRows: 5 }"></textarea>
+  </div>
+
+  <div class="config-label">颜色</div>
 
   <div class="config-container">
     <app-color-picker [currentColor]="fontColor" (colorChange)="onColorChange($event)"></app-color-picker>

@@ -84,6 +84,11 @@ export class ContentConfigComponent implements OnInit {
     this.emitConfig();
   }
 
+  onTextChange(value: string): void {
+    this.text = value;
+    this.emitConfig();
+  }
+
   /**
    * 组合当前所有状态并发出完整的布局配置
    */

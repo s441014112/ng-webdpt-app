@@ -49,6 +49,11 @@ export class TitleConfigComponent implements OnInit {
     this.fontColor = value;
     this.emitProperties(); // 每次选择变化都发出新的属性集合
   }
+
+  onTextChange(value: string): void {
+    this.text = value;
+    this.emitProperties();
+  }
   /**
    * 组合当前状态并发出属性集合
    */
