@@ -304,7 +304,7 @@ export class WidgetComponent implements OnInit {
     if (!this.rootNode) {
       this.rootNode = this.createRootComponent();
       this.updateAllCanvasDropListIds(this.rootNode);
-      console.log('Root component created and added to canvas.');
+      console.log('已经在画布中添加Root组件.');
     }
 
     const draggedData = event.item.data;
@@ -381,12 +381,12 @@ export class WidgetComponent implements OnInit {
     }
 
 
-    // 阻止 Root 组件被拖动 (规则 1)
+    // 阻止 Root 组件被拖动
     if (draggedData.type === COMPONENT_TYPE.ROOT) {
       console.warn('组件不可拖动');
       return;
     }
-    // 阻止 Title 组件被拖动 (规则 8)
+    // 阻止 Title 组件被拖动
     if (draggedData.type === COMPONENT_TYPE.TITLE) {
       return;
     }

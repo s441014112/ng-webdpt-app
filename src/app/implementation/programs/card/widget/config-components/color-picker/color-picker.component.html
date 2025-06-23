@@ -3,7 +3,12 @@
   <div class="trigger" (click)="isDropdownOpen = !isDropdownOpen">
     <span class="color-badge" [style.background-color]="selectedColor"></span>
     <span class="color-label">{{ colorName }}</span>
-    <span class="arrow">▼</span>
+    <span class="arrow" *ngIf="!isDropdownOpen">
+      <i nz-icon nzType="down" nzTheme="outline"></i>
+    </span>
+    <span class="arrow" *ngIf="isDropdownOpen">
+      <i nz-icon nzType="up" nzTheme="outline"></i>
+    </span>
   </div>
 
   <!-- 下拉面板 -->
