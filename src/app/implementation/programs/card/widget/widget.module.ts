@@ -67,6 +67,7 @@ import { DividerConfigComponent } from './config-components/divider-config/divid
     DividerConfigComponent
   ],
   imports: [
+    DragDropModule,
     CommonModule,
     NzLayoutModule,
     NzIconModule,
@@ -74,7 +75,6 @@ import { DividerConfigComponent } from './config-components/divider-config/divid
     NzButtonModule,
     NzImageModule,
     NzDividerModule,
-    DragDropModule,
     WidgetRoutingModule,
     NzSelectModule,
     FormsModule,
